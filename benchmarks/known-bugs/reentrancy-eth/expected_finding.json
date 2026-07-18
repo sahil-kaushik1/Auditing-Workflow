@@ -1,0 +1,16 @@
+{
+  "case_id": "reentrancy-eth",
+  "description": "Classic ETH reentrancy: state update after external call allows double-withdrawal",
+  "expected_finding": {
+    "severity": "Critical",
+    "category": "reentrancy",
+    "root_cause": "VulnerableBank.withdraw updates balances[msg.sender] AFTER the ETH transfer, violating CEI",
+    "invariant_violated": "sum(balances) <= address(this).balance at all times",
+    "attack_summary": "Attacker contract's receive() re-enters withdraw() before balance is decremented, draining vault"
+  },
+  "pass_criteria": {
+    "must_find": true,
+    "minimum_severity": "High",
+    "acceptable_severities": ["Critical", "High"]
+  }
+}

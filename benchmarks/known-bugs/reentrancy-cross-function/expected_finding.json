@@ -1,0 +1,35 @@
+{
+  "benchmark_id": "BENCH-KB-002",
+  "category": "known-bugs",
+  "name": "reentrancy-cross-function",
+  "description": "Classic cross-function reentrancy — CEI violation in withdraw()",
+  "ground_truth": {
+    "severity": "Critical",
+    "title": "Cross-function reentrancy in withdraw() via missing CEI pattern",
+    "root_cause": "ETH transfer occurs before balance state update in withdraw()",
+    "violated_invariant": "user balance must reflect their actual withdrawable ETH at all times",
+    "failure_predicate": "attacker can withdraw more ETH than deposited by re-entering transfer() during withdraw()'s external call",
+    "attack_path": [
+      "1. Attacker deposits 1 ETH",
+      "2. Attacker calls withdraw(1 ETH)",
+      "3. VulnerableBank sends 1 ETH to attacker (external call)",
+      "4. Attacker's receive() calls transfer(victim, 1 ETH)",
+      "5. balances[attacker] is still 1 ETH (not yet decremented) — transfer succeeds",
+      "6. withdraw() continues: balances[attacker] -= 1 ETH → now underflows or zeroes",
+      "7. Attacker has received 1 ETH AND transferred 1 ETH worth of credit to another account"
+    ],
+    "economic_impact": {
+      "asset": "ETH",
+      "max_extractable": "up to contract's entire ETH balance",
+      "impact_class": "theft_of_funds"
+    },
+    "relevant_functions": ["withdraw", "transfer"],
+    "detection_keywords": ["call.value", "call{value", "CEI", "nonReentrant", "ReentrancyGuard"]
+  },
+  "pass_criteria": {
+    "must_find": true,
+    "min_severity": "High",
+    "target_function": "VulnerableBank.withdraw",
+    "must_mention_root_cause": "state updated after external call"
+  }
+}

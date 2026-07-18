@@ -1,0 +1,18 @@
+{
+  "benchmark_id": "BENCH-FP-001",
+  "category": "false-positive-cases",
+  "name": "eip4626-virtual-shares",
+  "description": "ERC4626 vault WITH virtual shares protection — share inflation attack is infeasible",
+  "why_safe": "The vault adds VIRTUAL_OFFSET (1000) to totalSupply() at all times. For a first-depositor attack to work, the attacker must donate more than VIRTUAL_OFFSET × deposit to move the share price meaningfully. This makes the attack economically irrational for any reasonable deposit size.",
+  "expected_verdict": {
+    "verdict": "REFUTED",
+    "reason": "Virtual shares (VIRTUAL_OFFSET = 1000) make share inflation economically infeasible. Negative memory pattern FP-SEED-001 applies.",
+    "must_not_produce": ["CONFIRMED", "CANDIDATE"],
+    "acceptable_verdicts": ["REFUTED", "INCONCLUSIVE", "no-finding"]
+  },
+  "negative_memory_link": "FP-SEED-001",
+  "pass_criteria": {
+    "must_not_flag_as": "High or Critical share inflation",
+    "acceptable_output": "REFUTED — virtual shares protection detected"
+  }
+}

@@ -1,0 +1,4 @@
+[agent]
+name = "context-builder"
+description = "Smart Contract Audit Agent"
+config = ".claude/agents/context-builder.md"

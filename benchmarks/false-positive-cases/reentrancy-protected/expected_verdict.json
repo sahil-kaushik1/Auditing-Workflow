@@ -1,0 +1,18 @@
+{
+  "benchmark_id": "BENCH-FP-002",
+  "category": "false-positive-cases",
+  "name": "reentrancy-protected",
+  "description": "Bank contract using CEI pattern + nonReentrant guard — reentrancy is not possible",
+  "why_safe": "Two independent protections both prevent reentrancy: (1) state (balances) is decremented BEFORE the external ETH call (CEI), so re-entry sees balance = 0. (2) nonReentrant modifier prevents any re-entry at the function level. Either one alone is sufficient.",
+  "expected_verdict": {
+    "verdict": "REFUTED",
+    "reason": "CEI pattern applied correctly (balance decremented before call) AND nonReentrant guard active. Double protection. Negative memory pattern FP-SEED-002 applies.",
+    "must_not_produce": ["CONFIRMED", "CANDIDATE"],
+    "acceptable_verdicts": ["REFUTED", "no-finding"]
+  },
+  "negative_memory_link": "FP-SEED-002",
+  "pass_criteria": {
+    "must_not_flag_as": "reentrancy vulnerability",
+    "acceptable_output": "REFUTED — CEI + nonReentrant detected"
+  }
+}

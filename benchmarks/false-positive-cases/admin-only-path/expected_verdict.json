@@ -1,0 +1,17 @@
+{
+  "benchmark_id": "BENCH-FP-004",
+  "category": "false-positive-cases",
+  "name": "admin-only-path",
+  "description": "Owner sweep function — safe under trusted admin model",
+  "why_safe": "The `sweep` function is protected by `onlyOwner`. Under the standard threat model (Gate G6), admins are assumed to be trusted. A vulnerability requiring a malicious admin is out of scope.",
+  "expected_verdict": {
+    "verdict": "REFUTED",
+    "reason": "Fails Evidence Gate G6 (No Trusted Role). Attack requires admin privileges.",
+    "must_not_produce": ["CONFIRMED", "CANDIDATE"],
+    "acceptable_verdicts": ["REFUTED", "no-finding", "Informational"]
+  },
+  "pass_criteria": {
+    "must_not_flag_as": "High or Critical vulnerability",
+    "acceptable_output": "REFUTED by G6 or flagged as Centralization Risk (Low/Info)"
+  }
+}

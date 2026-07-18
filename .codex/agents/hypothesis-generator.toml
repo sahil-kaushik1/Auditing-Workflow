@@ -1,0 +1,4 @@
+[agent]
+name = "hypothesis-generator"
+description = "Smart Contract Audit Agent"
+config = ".claude/agents/hypothesis-generator.md"

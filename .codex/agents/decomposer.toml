@@ -1,0 +1,4 @@
+[agent]
+name = "decomposer"
+description = "Smart Contract Audit Agent"
+config = ".claude/agents/decomposer.md"

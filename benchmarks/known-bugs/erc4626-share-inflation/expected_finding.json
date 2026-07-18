@@ -1,0 +1,16 @@
+{
+  "case_id": "erc4626-share-inflation",
+  "description": "Classic first-depositor share inflation attack on ERC4626 vault without virtual share offset",
+  "expected_finding": {
+    "severity": "High",
+    "category": "accounting",
+    "root_cause": "VulnerableVault.convertToShares uses spot balance without virtual offset, enabling first-depositor inflation",
+    "invariant_violated": "shares * pricePerShare == deposited_assets for all depositors",
+    "attack_summary": "Attacker deposits 1 wei (gets 1 share), donates large amount to vault, victim deposits and receives 0 shares"
+  },
+  "pass_criteria": {
+    "must_find": true,
+    "minimum_severity": "Medium",
+    "acceptable_severities": ["Critical", "High", "Medium"]
+  }
+}

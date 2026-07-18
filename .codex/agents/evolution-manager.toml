@@ -1,0 +1,4 @@
+[agent]
+name = "evolution-manager"
+description = "Smart Contract Audit Agent"
+config = ".claude/agents/evolution-manager.md"

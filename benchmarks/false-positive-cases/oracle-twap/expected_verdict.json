@@ -1,0 +1,18 @@
+{
+  "benchmark_id": "BENCH-FP-003",
+  "category": "false-positive-cases",
+  "name": "oracle-twap",
+  "description": "Uniswap V3 TWAP oracle with 30-minute interval — resistant to flash loan manipulation",
+  "why_safe": "The oracle queries `observe` with a 30-minute interval (1800 seconds). Flash loan manipulation requires altering the spot price within a single block, which has a negligible effect on a 30-minute TWAP.",
+  "expected_verdict": {
+    "verdict": "REFUTED",
+    "reason": "TWAP interval is sufficiently long (30 minutes) to prevent flash loan manipulation. Negative memory pattern FP-SEED-003 applies.",
+    "must_not_produce": ["CONFIRMED", "CANDIDATE"],
+    "acceptable_verdicts": ["REFUTED", "no-finding"]
+  },
+  "negative_memory_link": "FP-SEED-003",
+  "pass_criteria": {
+    "must_not_flag_as": "High or Critical oracle manipulation",
+    "acceptable_output": "REFUTED — TWAP protection detected"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "benchmark_id": "BENCH-KB-004",
+  "category": "known-bugs",
+  "name": "bridge-replay",
+  "description": "Cross-chain bridge signature replay attack due to missing nonce and chain ID",
+  "ground_truth": {
+    "severity": "Critical",
+    "title": "Signature replay attack in bridge withdrawal",
+    "root_cause": "The signed message hash does not include a nonce or chainid",
+    "violated_invariant": "A valid signature must only be usable exactly once on the intended chain",
+    "failure_predicate": "An attacker can submit the exact same valid signature multiple times to repeatedly withdraw funds",
+    "attack_path": [
+      "1. User initiates a valid withdrawal of 100 tokens",
+      "2. Bridge validators sign the payload (user, token, 100)",
+      "3. User submits the signature and receives 100 tokens",
+      "4. Attacker (or user) takes the same signature and calls withdraw() again",
+      "5. The signature is still mathematically valid since no state (like a nonce) was consumed",
+      "6. Attacker repeatedly drains the bridge"
+    ],
+    "economic_impact": {
+      "asset": "Bridge tokens",
+      "max_extractable": "Entire bridge balance for the token",
+      "impact_class": "theft_of_funds"
+    },
+    "relevant_functions": ["withdraw"],
+    "detection_keywords": ["signature", "nonce", "chainid", "keccak256", "recover"]
+  },
+  "pass_criteria": {
+    "must_find": true,
+    "min_severity": "High",
+    "target_function": "VulnerableBridge.withdraw",
+    "must_mention_root_cause": "missing nonce or chain ID in signature"
+  }
+}

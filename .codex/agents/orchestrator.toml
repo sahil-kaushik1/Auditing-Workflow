@@ -1,0 +1,4 @@
+[agent]
+name = "orchestrator"
+description = "Smart Contract Audit Agent"
+config = ".claude/agents/orchestrator.md"

@@ -1,0 +1,25 @@
+{
+  "benchmark_id": "BENCH-SB-002",
+  "category": "synthetic-bugs",
+  "name": "donation-vector",
+  "description": "Minting shares before transferring assets allows reentrancy exploitation with ERC777",
+  "bug_description": "deposit() calls _mint() before asset.transferFrom(). This violates CEI. If the underlying asset is an ERC777 token, the attacker can re-enter during the transferFrom hook, leveraging the newly minted shares while the vault has not yet received the assets.",
+  "ground_truth": {
+    "severity": "Medium",
+    "title": "CEI violation in deposit allows reentrancy with tokens containing hooks",
+    "root_cause": "Shares are minted before the underlying assets are transferred into the vault",
+    "violated_invariant": "Shares must only be backed by actual assets received",
+    "failure_predicate": "Attacker re-enters during transferFrom and utilizes minted shares to borrow or redeem against an unupdated totalAssets balance",
+    "detection_keywords": ["_mint", "transferFrom", "CEI", "reentrancy"]
+  },
+  "pass_criteria": {
+    "must_find": true,
+    "min_severity": "Low",
+    "target_function": "VulnerableVaultBugInserted.deposit",
+    "must_mention_root_cause": "mint before transfer"
+  },
+  "differential_check": {
+    "compare_to": "CorrectVault",
+    "difference": "Ordering of _mint and transferFrom in deposit"
+  }
+}

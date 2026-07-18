@@ -1,326 +1,295 @@
 {
-  "_comment": "SAFe Agentic Workflow team configuration. Placeholders ({{...}}) are replaced by scripts/setup-template.sh during project initialization. Agents read this file to understand team structure, quality gates, and workflow settings.",
+  "_comment": "Smart Contract Auditing Harness — team configuration. 11 agents, 3-stage pipeline, 7 quality gates.",
 
   "project": {
     "name": "{{PROJECT_NAME}}",
     "short_name": "{{PROJECT_SHORT}}",
     "repo": "{{PROJECT_REPO}}",
-    "domain": "{{PROJECT_DOMAIN}}",
+    "domain": "smart-contract-auditing",
     "github_org": "{{GITHUB_ORG}}",
     "company": "{{COMPANY_NAME}}"
   },
 
   "workflow": {
     "ticket_prefix": "{{TICKET_PREFIX}}",
-    "ticket_prefix_lower": "{{TICKET_PREFIX_LOWER}}",
     "main_branch": "{{MAIN_BRANCH}}",
-    "linear_workspace": "{{LINEAR_WORKSPACE}}",
     "branch_format": "{{TICKET_PREFIX}}-{number}-{description}",
     "commit_format": "type(scope): description [{{TICKET_PREFIX}}-XXX]",
     "merge_strategy": "rebase-and-merge"
   },
 
-  "mcp_servers": {
-    "_comment": "MCP server names used for tool invocations like mcp__<server>__<method>.",
-    "linear": "{{MCP_LINEAR_SERVER}}",
-    "confluence": "{{MCP_CONFLUENCE_SERVER}}"
-  },
-
   "agents": {
-    "_comment": "The 11 SAFe agent roles. Each entry maps the role key to its config file, display name, category, and collapsibility (per TICKET_PREFIX-499 role collapsing rules).",
+    "_comment": "11 audit agents mapped to the 3-stage pipeline.",
 
-    "tdm": {
-      "name": "Technical Delivery Manager",
-      "config_file": ".claude/agents/tdm.md",
+    "orchestrator": {
+      "name": "Orchestrator",
+      "config_file": ".claude/agents/orchestrator.md",
       "category": "planning",
-      "description": "Reactive blocker resolution, Linear updates, evidence tracking",
+      "description": "Resource scheduler, gap analysis, cycle management, 70/30 budget enforcement",
       "collapsible": true,
-      "primary_tools": ["linear", "confluence"],
-      "exit_state": null
+      "primary_tools": ["read", "write", "bash"],
+      "exit_state": "Cycle {N} complete"
     },
-    "bsa": {
-      "name": "Business Systems Analyst",
-      "config_file": ".claude/agents/bsa.md",
+    "decomposer": {
+      "name": "Decomposer",
+      "config_file": ".claude/agents/decomposer.md",
       "category": "planning",
-      "description": "Requirements decomposition, acceptance criteria, testing strategy",
-      "collapsible": true,
-      "primary_tools": ["linear", "confluence", "markdown"],
-      "exit_state": null
+      "description": "10-dimensional project decomposition (modules, entrypoints, data-flow, assets, state-machines, permissions, async, config, invariants, business-flows)",
+      "collapsible": false,
+      "primary_tools": ["read", "grep", "bash"],
+      "exit_state": "Decomposition complete"
     },
-    "system-architect": {
-      "name": "System Architect",
-      "config_file": ".claude/agents/system-architect.md",
+    "threat-modeler": {
+      "name": "Threat Modeler",
+      "config_file": ".claude/agents/threat-modeler.md",
       "category": "planning",
-      "description": "Pattern validation, Stage 1 PR review, migration approval, ADRs",
+      "description": "Task compiler — converts decomposition into 9-field proof obligations",
       "collapsible": false,
-      "primary_tools": ["read", "grep", "adr-templates"],
-      "exit_state": "Stage 1 Approved - Ready for ARCHitect"
+      "primary_tools": ["read", "write", "grep"],
+      "exit_state": "Tasks compiled"
     },
-    "fe-developer": {
-      "name": "Frontend Developer",
-      "config_file": ".claude/agents/fe-developer.md",
-      "category": "implementation",
-      "description": "UI components, client-side logic, user interactions",
-      "collapsible": true,
-      "primary_tools": ["read", "write", "edit", "bash"],
-      "exit_state": "Ready for QAS",
-      "validation_command": "{{TYPE_CHECK_COMMAND}} && {{LINT_COMMAND}} && {{BUILD_COMMAND}}"
-    },
-    "be-developer": {
-      "name": "Backend Developer",
-      "config_file": ".claude/agents/be-developer.md",
-      "category": "implementation",
-      "description": "API routes, server logic, RLS enforcement",
-      "collapsible": true,
-      "primary_tools": ["read", "write", "edit", "bash"],
-      "exit_state": "Ready for QAS",
-      "validation_command": "{{TEST_INTEGRATION_COMMAND}}"
-    },
-    "data-engineer": {
-      "name": "Data Engineer",
-      "config_file": ".claude/agents/data-engineer.md",
-      "category": "implementation",
-      "description": "Schema changes, migrations, database architecture",
-      "collapsible": true,
-      "primary_tools": ["prisma", "sql", "migration-tools"],
-      "exit_state": "Ready for QAS",
-      "validation_command": "{{DB_MIGRATE_COMMAND}}"
-    },
-    "qas": {
-      "name": "Quality Assurance Specialist",
-      "config_file": ".claude/agents/qas.md",
-      "category": "quality",
-      "description": "Execute testing strategy, validate ACs, iteration authority",
+    "deep-reasoner": {
+      "name": "Deep Reasoner",
+      "config_file": ".claude/agents/deep-reasoner.md",
+      "category": "execution",
+      "description": "Constrained reasoning inside task boundaries with drift self-check",
       "collapsible": false,
-      "primary_tools": ["playwright", "jest", "linear"],
-      "exit_state": "Approved for RTE",
-      "gate_owner": true
+      "primary_tools": ["read", "bash", "grep"],
+      "exit_state": "Reasoning complete for TASK-{N}"
     },
-    "security-engineer": {
-      "name": "Security Engineer",
-      "config_file": ".claude/agents/security-engineer.md",
+    "hypothesis-generator": {
+      "name": "Hypothesis Generator",
+      "config_file": ".claude/agents/hypothesis-generator.md",
+      "category": "execution",
+      "description": "Creative divergent vulnerability hypothesis clouds (optional, not in audit-grade primary pipeline)",
+      "collapsible": true,
+      "primary_tools": ["read", "grep"],
+      "exit_state": "Hypotheses generated"
+    },
+    "sast-integrator": {
+      "name": "SAST Integrator",
+      "config_file": ".claude/agents/sast-integrator.md",
+      "category": "execution",
+      "description": "Slither, call graphs, storage layouts, data-flow — structural facts only",
+      "collapsible": true,
+      "primary_tools": ["bash", "read", "write", "grep"],
+      "exit_state": "SAST analysis complete"
+    },
+    "verifier": {
+      "name": "Verifier",
+      "config_file": ".claude/agents/verifier.md",
       "category": "quality",
-      "description": "Security validation, RLS checks, vulnerability assessment",
+      "description": "Independent verification via Foundry PoCs, invariant tests, fuzzing. NEVER shares context with Reasoner.",
       "collapsible": false,
-      "primary_tools": ["rls-scripts", "security-tools"],
-      "exit_state": null,
-      "gate_owner": true
+      "primary_tools": ["read", "bash", "write", "grep"],
+      "exit_state": "Verification complete",
+      "gate_owner": false,
+      "independence_requirement": "Must not receive Reasoner's chain-of-thought"
     },
-    "tech-writer": {
-      "name": "Technical Writer",
-      "config_file": ".claude/agents/tech-writer.md",
+    "judge": {
+      "name": "Judge",
+      "config_file": ".claude/agents/judge.md",
       "category": "quality",
-      "description": "Documentation, guides, technical content",
-      "collapsible": true,
-      "primary_tools": ["read", "write", "edit", "grep", "glob", "bash"],
-      "exit_state": null,
-      "validation_command": "{{LINT_MD_COMMAND}}"
+      "description": "Gate owner for decomposition, task quality, drift detection, evidence evaluation. Finding classifier. Non-collapsible.",
+      "collapsible": false,
+      "primary_tools": ["read", "grep"],
+      "exit_state": "Gate PASSED/FAILED",
+      "gate_owner": true,
+      "gates_owned": ["decomposition_gate", "task_quality_gate", "drift_detection_gate", "evidence_gate"]
     },
-    "dpe": {
-      "name": "Data Provisioning Engineer",
-      "config_file": ".claude/agents/data-provisioning-eng.md",
+    "context-builder": {
+      "name": "Context Builder",
+      "config_file": ".claude/agents/context-builder.md",
       "category": "quality",
-      "description": "Test data, database access, data validation",
+      "description": "Per-task context provisioning. Enforces trigger, responsibility, and context isolation.",
       "collapsible": true,
-      "primary_tools": ["sql", "prisma-studio", "scripts"],
-      "exit_state": null
+      "primary_tools": ["read", "grep", "bash"],
+      "exit_state": "Context package built"
     },
-    "rte": {
-      "name": "Release Train Engineer",
-      "config_file": ".claude/agents/rte.md",
-      "category": "release",
-      "description": "PR creation, CI/CD monitoring, no code, no merge",
+    "report-compiler": {
+      "name": "Report Compiler",
+      "config_file": ".claude/agents/report-compiler.md",
+      "category": "quality",
+      "description": "Structured findings, gap records, coverage maps, executive summary",
       "collapsible": true,
-      "primary_tools": ["git", "github-cli", "ci-tools"],
-      "exit_state": "Ready for HITL Review"
-    }
-  },
-
-  "review_stages": {
-    "_comment": "Three-stage PR review pipeline. Each stage must pass before proceeding to the next.",
-    "stage_1": {
-      "name": "System Architect",
-      "reviewer": "system-architect",
-      "focus": "Technical and pattern validation",
-      "blocking": true
+      "primary_tools": ["read", "write", "grep"],
+      "exit_state": "Report compiled"
     },
-    "stage_2": {
-      "name": "ARCHitect-in-CLI",
-      "reviewer": "{{ARCHITECT_GITHUB_HANDLE}}",
-      "focus": "Comprehensive architectural review",
-      "blocking": true
-    },
-    "stage_3": {
-      "name": "HITL",
-      "reviewer": "{{AUTHOR_HANDLE}}",
-      "focus": "Final merge authority",
-      "blocking": true
+    "evolution-manager": {
+      "name": "Evolution Manager",
+      "config_file": ".claude/agents/evolution-manager.md",
+      "category": "evolution",
+      "description": "Long loop: review attribution (8 failure types), A/B testing, rollback, selective inheritance",
+      "collapsible": true,
+      "primary_tools": ["read", "write", "grep", "bash"],
+      "exit_state": "Evolution analysis complete"
     }
   },
 
   "quality_gates": {
-    "_comment": "Quality gate commands. Each gate has a command placeholder to be filled manually with the project's actual CLI commands after running setup-template.sh.",
-    "lint": {
-      "name": "Linting",
-      "command": "{{LINT_COMMAND}}",
-      "required": true,
-      "stage": "pre-commit"
+    "_comment": "7 blocking quality gates in the audit pipeline.",
+    "decomposition_gate": {
+      "name": "Decomposition Gate",
+      "owner": "judge",
+      "blocking": true,
+      "stage": "post-decomposition",
+      "checks": "All 10 dimensions, invariants explicit, flows mapped end-to-end"
     },
-    "type_check": {
-      "name": "Type Checking",
-      "command": "{{TYPE_CHECK_COMMAND}}",
-      "required": true,
-      "stage": "pre-commit"
+    "task_quality_gate": {
+      "name": "Task Quality Gate",
+      "owner": "judge",
+      "blocking": true,
+      "stage": "post-task-definition",
+      "checks": "All 9 task fields, falsifiable predicates, no overlaps, business-flow tasks present"
     },
-    "unit_tests": {
-      "name": "Unit Tests",
-      "command": "{{TEST_UNIT_COMMAND}}",
-      "required": true,
-      "stage": "pre-push"
+    "drift_detection_gate": {
+      "name": "Drift Detection Gate",
+      "owner": "judge",
+      "blocking": true,
+      "stage": "post-reasoning",
+      "checks": "Reasoner output matches task drift anchors, target function analyzed, defined path followed"
     },
-    "integration_tests": {
-      "name": "Integration Tests",
-      "command": "{{TEST_INTEGRATION_COMMAND}}",
-      "required": true,
-      "stage": "pre-push"
+    "verification_gate": {
+      "name": "Verification Gate",
+      "owner": "judge",
+      "blocking": true,
+      "stage": "post-verification",
+      "checks": "Evidence sufficient to classify (CONFIRMED/REFUTED/INCONCLUSIVE)"
     },
-    "e2e_tests": {
-      "name": "End-to-End Tests",
-      "command": "{{TEST_E2E_COMMAND}}",
-      "required": false,
-      "stage": "ci"
+    "evidence_gate": {
+      "name": "Evidence Gate",
+      "owner": "judge",
+      "blocking": true,
+      "stage": "pre-report",
+      "checks": "Concrete witness present OR safety actively proven with evidence"
     },
-    "security_scan": {
-      "name": "Security Scan",
-      "command": "{{SECURITY_SCAN_COMMAND}}",
-      "required": true,
-      "stage": "ci"
+    "evolution_gate": {
+      "name": "Evolution Gate",
+      "owner": "evolution-manager",
+      "blocking": true,
+      "stage": "between-audits",
+      "checks": "Change measured, no regression, rollback possible, works on 3+ projects"
     },
-    "build": {
-      "name": "Production Build",
-      "command": "{{BUILD_COMMAND}}",
-      "required": true,
-      "stage": "ci"
-    },
-    "ci_validate": {
-      "name": "Full CI Validation",
-      "command": "{{CI_VALIDATE_COMMAND}}",
-      "required": true,
-      "stage": "pre-pr",
-      "_comment": "Runs all gates in sequence. Must pass before PR creation."
+    "hitl_gate": {
+      "name": "HITL Final Review",
+      "owner": "human-auditor",
+      "blocking": true,
+      "stage": "final",
+      "checks": "Human auditor reviews all findings, gap records, and coverage map"
     }
   },
 
-  "gates": {
-    "_comment": "Blocking gates in the delivery pipeline. These correspond to the Gate Quick Reference in AGENTS.md.",
-    "stop_the_line": {
-      "owner": "implementer",
-      "blocking": true,
-      "description": "No acceptance criteria means no work begins"
+  "pipeline": {
+    "_comment": "3-stage audit pipeline with resource allocation.",
+    "stages": {
+      "stage_1_decomposition": {
+        "budget_share": "60-70%",
+        "agents": ["sast-integrator", "decomposer", "context-builder"],
+        "output": "specs/decomposition/, specs/sast/",
+        "gate": "decomposition_gate"
+      },
+      "stage_2_task_definition": {
+        "budget_share": "included in stage 1",
+        "agents": ["threat-modeler"],
+        "output": "specs/tasks/",
+        "gate": "task_quality_gate"
+      },
+      "stage_3_reasoning_verification": {
+        "budget_share": "30-40%",
+        "agents": ["context-builder", "deep-reasoner", "verifier"],
+        "output": "specs/reasoning/, specs/verification/",
+        "gates": ["drift_detection_gate", "verification_gate", "evidence_gate"]
+      }
     },
-    "qas_gate": {
-      "owner": "qas",
-      "blocking": true,
-      "description": "QAS must approve before RTE creates PR"
-    },
-    "stage_1_review": {
-      "owner": "system-architect",
-      "blocking": true,
-      "description": "Pattern and architectural compliance check"
-    },
-    "stage_2_review": {
-      "owner": "architect-in-cli",
-      "blocking": true,
-      "description": "Comprehensive architecture review"
-    },
-    "hitl_merge": {
-      "owner": "{{AUTHOR_HANDLE}}",
-      "blocking": true,
-      "description": "Final human merge authority"
+    "cycles": {
+      "gap_analysis_after_each_cycle": true,
+      "supplemental_tasks_from_gaps": true,
+      "do_not_repeat_full_audit": true
     }
   },
+
+  "scanner_modes": {
+    "audit_grade": {
+      "budget_split": "70/30",
+      "verification": "full_mandatory",
+      "gap_cycles": true,
+      "hypothesis_generator": false
+    },
+    "discovery": {
+      "budget_split": "50/50",
+      "verification": "lighter",
+      "gap_cycles": true,
+      "hypothesis_generator": true
+    },
+    "contest_rush": {
+      "budget_split": "40/60",
+      "verification": "parallel_hypotheses",
+      "gap_cycles": false,
+      "hypothesis_generator": true
+    },
+    "fast_triage": {
+      "budget_split": "30/70",
+      "verification": "on_demand",
+      "gap_cycles": false,
+      "hypothesis_generator": false
+    }
+  },
+
+  "resource_scheduling": {
+    "allocate": {
+      "description": "Split audit goal into tasks via Threat Modeler"
+    },
+    "extract": {
+      "description": "Require structured output per task",
+      "required_outputs": ["evidence", "witnesses", "counterexamples", "unresolved_questions", "assumptions"]
+    },
+    "reallocate": {
+      "description": "Gap analysis directs next cycle budget",
+      "criteria": [
+        "never_covered_paths",
+        "shallow_proofs",
+        "unchallenged_safety_conclusions",
+        "missing_cross_module_checks",
+        "boundary_values_not_examined",
+        "missing_state_transitions",
+        "missing_differential_comparisons"
+      ]
+    }
+  },
+
+  "finding_classification": {
+    "hypothesis": "Reasoner proposed, no verification",
+    "candidate": "Verified but lacks full impact proof",
+    "verified": "PoC passes, attack path reproducible",
+    "confirmed": "Verified + impact assessed + severity assigned"
+  },
+
+  "review_attribution_categories": [
+    "task_design_failure",
+    "missing_failure_predicate",
+    "missing_witness_requirement",
+    "context_failure",
+    "reasoning_failure",
+    "verification_failure",
+    "artifact_failure",
+    "reporting_failure"
+  ],
 
   "paths": {
-    "pattern_library": "patterns_library/",
-    "specs": "specs/",
-    "spec_templates": "specs_templates/",
     "agent_configs": ".claude/agents/",
-    "skills": ".claude/skills/",
-    "commands": ".claude/commands/",
-    "adrs": "docs/adr/",
-    "database_docs": "docs/database/",
-    "security_docs": "docs/security/",
-    "sop_docs": "docs/sop/",
-    "ci_cd_docs": "docs/ci-cd/",
-    "onboarding_docs": "docs/onboarding/",
-    "workflow_docs": "docs/workflow/"
-  },
-
-  "agent_teams": {
-    "_comment": "Agent Teams configuration (experimental). Requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 in settings.json.",
-    "enabled": false,
-    "env_var": "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS",
-    "default_team_lead": "tdm",
-    "default_teammate_mode": "in-process",
-    "recommended_team_size": {
-      "story": "2-3",
-      "feature": "3-5",
-      "epic": "5-8"
-    },
-    "gate_dependencies": {
-      "_comment": "SAFe quality gates expressed as task dependencies. Blocked tasks cannot be claimed until dependencies complete.",
-      "implementation": {
-        "blocks": ["qas_validation"]
-      },
-      "qas_validation": {
-        "blockedBy": ["implementation"],
-        "blocks": ["rte_pr_creation"]
-      },
-      "rte_pr_creation": {
-        "blockedBy": ["qas_validation"],
-        "blocks": ["stage_1_review"]
-      },
-      "stage_1_review": {
-        "blockedBy": ["rte_pr_creation"],
-        "blocks": ["stage_2_review"]
-      },
-      "stage_2_review": {
-        "blockedBy": ["stage_1_review"],
-        "blocks": ["hitl_merge"]
-      },
-      "hitl_merge": {
-        "blockedBy": ["stage_2_review"]
-      }
-    },
-    "hooks": {
-      "_comment": "Hook templates for quality gate enforcement. Customize commands for your project.",
-      "TeammateIdle": {
-        "description": "Validate teammate completed assigned tasks before going idle",
-        "exit_code_2": "Sends feedback and keeps teammate working"
-      },
-      "TaskCompleted": {
-        "description": "Validate task output meets acceptance criteria before completion",
-        "exit_code_2": "Prevents completion and sends feedback"
-      }
-    }
-  },
-
-  "documentation": {
-    "_comment": "Key documentation files that agents must read before specific types of work.",
-    "mandatory_always": [
-      "CONTRIBUTING.md",
-      "AGENTS.md"
-    ],
-    "mandatory_database": [
-      "docs/database/DATA_DICTIONARY.md",
-      "docs/database/RLS_DATABASE_MIGRATION_SOP.md",
-      "docs/database/RLS_IMPLEMENTATION_GUIDE.md"
-    ],
-    "mandatory_security": [
-      "docs/security/SECURITY_FIRST_ARCHITECTURE.md"
-    ],
-    "mandatory_architecture": [
-      "docs/adr/"
-    ]
+    "skills": ".agents/skills/",
+    "decomposition": "specs/decomposition/",
+    "sast": "specs/sast/",
+    "tasks": "specs/tasks/",
+    "context": "specs/context/",
+    "reasoning": "specs/reasoning/",
+    "verification": "specs/verification/",
+    "hypotheses": "specs/hypotheses/",
+    "gates": "specs/gates/",
+    "cycles": "specs/cycles/",
+    "evolution": "specs/evolution/",
+    "findings": "findings/",
+    "patterns": "patterns_library/",
+    "templates": "specs_templates/"
   }
 }

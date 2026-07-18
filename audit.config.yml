@@ -1,0 +1,205 @@
+# =============================================================================
+# audit.config.yml — SAW Audit Configuration
+# =============================================================================
+# User-configurable settings for the audit pipeline.
+# Edit this file to control looping, convergence, parallelism, and evolution.
+# The Orchestrator agent reads this file at the start of every cycle.
+# =============================================================================
+
+# ── Protocol Settings ────────────────────────────────────────────────────────
+protocol:
+  name: "MyProtocol"          # Override with actual protocol name
+  version: "1.0.0"
+  audit_scope: []             # Empty = all contracts in src/
+  # audit_scope:              # Example: restrict scope
+  #   - "contracts/Vault.sol"
+  #   - "contracts/VaultFactory.sol"
+
+# ── Loop Control ─────────────────────────────────────────────────────────────
+loop:
+  # Maximum number of full audit cycles to run
+  max_cycles: 6               # SAW: raised to 6. Complex protocols need 4-6 cycles.
+
+  # Convergence threshold — stop looping when all gap scores below this
+  # SAW fix: lowered from 0.6 to 0.3. The old value allowed the orchestrator
+  # to declare convergence after a single cycle with one finding.
+  convergence_threshold: 0.3  # 0.0 = never converge, 1.0 = run max_cycles always
+
+  # Stop immediately if a critical finding (severity >= High) is confirmed
+  stop_on_critical_finding: false   # true = stop and report immediately
+
+  # Continue running until this many confirmed findings are accumulated
+  # Set to 0 to disable (loop purely based on convergence)
+  target_confirmed_findings: 0
+
+  # Minimum cycles to always run (even if converged early)
+  # SAW fix: raised from 1 to 3. Forces at least 3 full reasoning passes.
+  min_cycles: 3
+
+# ── Parallelism Control ──────────────────────────────────────────────────────
+parallelism:
+  # Enable parallel sub-agent dispatch from within the runtime (Claude Code / Codex)
+  # Uses the native Task tool (Claude Code) or parallel tool invocations (Codex)
+  enabled: true
+
+  # Maximum concurrent reasoning workers
+  max_reasoning_workers: 3     # Reduce to 1 for sequential (debugging only)
+
+  # Maximum concurrent verification workers
+  max_verification_workers: 2  # Verifier + Skeptic can run in parallel
+
+  # Dispatch mode:
+  #   "task_tool"   = use the Task tool (Claude Code native)
+  #   "parallel"    = fire multiple tool calls in parallel (Codex native)
+  #   "sequential"  = force sequential execution (debugging)
+  # dispatch_mode:
+  #   "task_tool"   = use the Task tool (Claude Code native)
+  #   "parallel"    = fire multiple tool calls in parallel (Codex native)
+  #   "sequential"  = force sequential execution (debugging)
+  # SAW: Codex does not have a Task tool — use "parallel" for Codex sessions.
+  # Use "task_tool" for Claude Code sessions.
+  dispatch_mode: "parallel"
+
+# ── Context Window Management ─────────────────────────────────────────────────
+context:
+  # Enable per-task context slicing (STRONGLY RECOMMENDED for large codebases)
+  slice_enabled: true
+
+  # Max tokens per task context package
+  max_tokens_per_task: 6000
+
+  # Depth of callee following (how many levels of function calls to include)
+  slice_depth: 2
+
+  # If a contract set exceeds this many files, force slicing mode
+  force_slice_above_files: 10
+
+  # Hierarchical decomposition: for protocols with many contracts,
+  # first do a high-level map, then deep-dive into modules
+  hierarchical_decomposition: true
+
+# ── Scanner Mode ─────────────────────────────────────────────────────────────
+scanner:
+  # Default mode (can be overridden via run-audit.sh --mode flag)
+  mode: "audit_grade"         # audit_grade | discovery | contest_rush | fast_triage | smoke_scan | conservative
+
+  # Minimum fraction of tasks that must use phase 4+ (invariant/fuzz/symbolic)
+  # SAW: enforced by Threat Modeler. Prevents all tasks defaulting to phase 3.
+  min_phase_4_plus_ratio: 0.20  # at least 20% of tasks must be phase 4, 5, 6, or 7
+
+  # Bug bounty sequence (chain of modes, run in order)
+  # Set bug_bounty_mode: true to activate this instead of scanner.mode
+  bug_bounty_mode: false
+  bug_bounty_sequence:
+    - "discovery"
+    - "contest_rush"
+    - "fast_triage"
+    - "audit_grade"
+
+# ── Verification Control ──────────────────────────────────────────────────────
+verification:
+  # Require Foundry PoC for High/Critical findings
+  require_poc_for_high: true
+  require_poc_for_critical: true
+  require_poc_for_medium: false
+
+  # Max Foundry test runs required for confirmation
+  poc_runs_required: 3        # Default: 3/3 consecutive runs
+
+  # Run Skeptic challenge before every Verifier invocation
+  skeptic_always: true
+
+# ── Self-Evolution Control ────────────────────────────────────────────────────
+evolution:
+  # Run auto-evolve.sh automatically after every cycle
+  auto_evolve_after_cycle: true
+
+  # Apply SAFE improvements (FP patterns, keyword additions) without human approval
+  auto_apply_safe: true
+
+  # Apply GATED improvements (agent file edits) without human approval
+  # CAUTION: set to true only if you fully trust the Harness Critic's suggestions
+  auto_apply_gated: false
+
+  # Required benchmark improvement delta to auto-apply a gated change
+  # e.g., 0.05 = must improve benchmark score by at least 5%
+  gated_improvement_threshold: 0.05
+
+  # Run benchmark suite before and after every gated change
+  benchmark_guard: true
+
+# ── Reasoning Depth ───────────────────────────────────────────────────────────
+reasoning:
+  # Token budget per task for the Deep Reasoner
+  # The Reasoner MUST stop when its output reaches this size
+  budget_tokens_critical: 12000
+  budget_tokens_high: 8000
+  budget_tokens_medium: 5000
+  budget_tokens_low: 3000
+
+  # Hypothesis mode: generate multiple attack hypotheses per task before reasoning
+  # SAW fix: enabled in ALL modes (was only enabled in discovery/contest_rush).
+  hypothesis_cloud: true
+  max_hypotheses_per_task: 5
+
+# ── Economic Analysis ──────────────────────────────────────────────────────────
+economics:
+  # Run Economic Analyst on all findings (not just High/Critical)
+  analyze_all_severities: false
+  analyze_high_critical: true
+
+  # RPC endpoint for on-chain state queries (set via env or here)
+  rpc_url: ""                 # Override: SAW_RPC_URL env var
+
+# ── Reporting ─────────────────────────────────────────────────────────────────
+reporting:
+  # Update dashboard after every single task completion
+  live_dashboard: true
+
+  # Include Skeptic verdicts in final report
+  include_skeptic_verdicts: true
+
+  # Include refuted tasks (with reason) in final report
+  include_refuted: true
+
+  # Severity floor for inclusion in executive summary
+  executive_summary_min_severity: "Medium"
+
+# ── Pipeline Enforcement ──────────────────────────────────────────────────────────
+artifact_enforcement:
+  # Block convergence if reasoning artifacts are missing
+  # SAW: was "false" implicitly (no enforcement existed at all)
+  require_reasoning_artifacts: true
+
+  # Block convergence if verification artifacts are missing for CONFIRMED tasks
+  require_verification_artifacts: true
+
+  # Minimum flow coverage ratio before convergence is allowed
+  # 0.8 = at least 80% of mapped flows must have at least one resolved task
+  min_flow_coverage_ratio: 0.80
+
+  # Block cycle-complete if skills-loaded file is missing for any task
+  require_skills_loaded: true
+
+  # Force re-dispatch of any task that is missing its reasoning artifact
+  auto_redispatch_missing_reasoning: true
+
+# ── Fuzzing Control ──────────────────────────────────────────────────────────────
+fuzzing:
+  # Enable dedicated Fuzzer agent (runs in parallel with Verifier for phase 4+ tasks)
+  enabled: true
+
+  # Time limit per fuzz run (seconds)
+  fuzz_timeout_sec: 300
+
+  # Medusa worker count
+  medusa_workers: 4
+
+  # Echidna test limit
+  echidna_test_limit: 50000
+
+  # Halmos loop bound
+  halmos_loop_bound: 10
+
+  # Halmos SMT timeout per property (seconds)
+  halmos_smt_timeout: 120

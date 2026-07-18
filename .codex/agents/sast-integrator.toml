@@ -1,0 +1,4 @@
+[agent]
+name = "sast-integrator"
+description = "Smart Contract Audit Agent"
+config = ".claude/agents/sast-integrator.md"

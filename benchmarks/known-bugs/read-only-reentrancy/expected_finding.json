@@ -1,0 +1,35 @@
+{
+  "benchmark_id": "BENCH-KB-005",
+  "category": "known-bugs",
+  "name": "read-only-reentrancy",
+  "description": "Read-only reentrancy allows reading manipulated price during callback",
+  "ground_truth": {
+    "severity": "High",
+    "title": "Read-only reentrancy allows price manipulation",
+    "root_cause": "removeLiquidity updates totalSupply AFTER the external ETH transfer, making the price() getter temporarily report incorrect values",
+    "violated_invariant": "External view functions must not return inconsistent state during external calls",
+    "failure_predicate": "Attacker can read a manipulated value from price() during the fallback of removeLiquidity",
+    "attack_path": [
+      "1. Attacker calls removeLiquidity",
+      "2. Contract calculates ETH amount and sends ETH to attacker",
+      "3. Attacker's fallback function is triggered",
+      "4. Attacker calls price() in the fallback",
+      "5. totalEth is decremented but totalSupply is NOT decremented yet",
+      "6. price() returns an artificially low value",
+      "7. Attacker uses this manipulated price in another integrated protocol"
+    ],
+    "economic_impact": {
+      "asset": "Integrated protocol funds",
+      "max_extractable": "Depends on the integrated protocol using the price oracle",
+      "impact_class": "price_manipulation"
+    },
+    "relevant_functions": ["removeLiquidity", "price"],
+    "detection_keywords": ["nonReentrant", "price", "call", "totalSupply"]
+  },
+  "pass_criteria": {
+    "must_find": true,
+    "min_severity": "Medium",
+    "target_function": "VulnerablePool.removeLiquidity",
+    "must_mention_root_cause": "state updated after external call allows reading stale/inconsistent state"
+  }
+}

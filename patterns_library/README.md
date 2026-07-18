@@ -1,203 +1,85 @@
-# {{PROJECT_SHORT}} Pattern Library
+# Patterns Library — Smart Contract Auditing
 
-> **Copy-Paste Ready Code Patterns for Agent-Driven Development**
-
-## Overview
-
-This pattern library provides battle-tested, production-ready code patterns extracted from the {{PROJECT_SHORT}} codebase. Each pattern is:
-
-- ✅ **Copy-Paste Ready** - Minimal customization needed
-- ✅ **Security Validated** - RLS enforced, auth required, input validated
-- ✅ **SOLID Compliant** - Follows architectural principles
-- ✅ **Test Covered** - Includes testing patterns
-
-## Pattern Index
-
-### API Routes
-
-| Pattern                                           | File                                     | Use Case                          |
-| ------------------------------------------------- | ---------------------------------------- | --------------------------------- |
-| [User Context API](./api/user-context-api.md)     | Basic authenticated API with RLS         | User-specific CRUD operations     |
-| [Admin Context API](./api/admin-context-api.md)   | Admin-only API with elevated permissions | Admin dashboards, management      |
-| [Webhook Handler](./api/webhook-handler.md)       | External webhook processing              | Stripe, Clerk, third-party events |
-| [Zod Validation API](./api/zod-validation-api.md) | Input validation with Zod schemas        | Form submissions, API inputs      |
-
-### UI Components
-
-| Pattern                                              | File                           | Use Case                 |
-| ---------------------------------------------------- | ------------------------------ | ------------------------ |
-| [Authenticated Page](./ui/authenticated-page.md)     | Protected page with auth check | User dashboard, profile  |
-| [Form with Validation](./ui/form-with-validation.md) | React Hook Form + Zod          | Data entry, settings     |
-| [Data Table](./ui/data-table.md)                     | Server-side paginated table    | List views, admin panels |
-
-### Database Operations
-
-| Pattern                                                | File                           | Use Case             |
-| ------------------------------------------------------ | ------------------------------ | -------------------- |
-| [RLS Migration](./database/rls-migration.md)           | Add table with RLS policies    | New user data tables |
-| [Prisma Transaction](./database/prisma-transaction.md) | Multi-step database operations | Complex workflows    |
-
-### Testing
-
-| Pattern                                                   | File                       | Use Case             |
-| --------------------------------------------------------- | -------------------------- | -------------------- |
-| [API Integration Test](./testing/api-integration-test.md) | Test API routes with RLS   | Endpoint validation  |
-| [E2E User Flow](./testing/e2e-user-flow.md)               | Playwright end-to-end test | User journey testing |
-
-### Security
-
-| Pattern                                                       | File                              | Use Case                 |
-| ------------------------------------------------------------- | --------------------------------- | ------------------------ |
-| [Input Sanitization](./security/input-sanitization.md)        | XSS/injection prevention          | User input handling      |
-| [Rate Limiting](./security/rate-limiting.md)                  | API rate limiting                  | Abuse prevention         |
-| [Secrets Management](./security/secrets-management.md)        | Environment variable management   | Config security          |
-
-### CI/CD
-
-| Pattern                                                       | File                             | Use Case                 |
-| ------------------------------------------------------------- | -------------------------------- | ------------------------ |
-| [GitHub Actions Workflow](./ci/github-actions-workflow.md)     | Standard CI pipeline             | Automated quality gates  |
-| [Deployment Pipeline](./ci/deployment-pipeline.md)             | Staging → production deployment  | Release management       |
-
-### Configuration
-
-| Pattern                                                       | File                             | Use Case                 |
-| ------------------------------------------------------------- | -------------------------------- | ------------------------ |
-| [Environment Config](./config/environment-config.md)           | Typed environment loading        | App configuration        |
-| [Structured Logging](./config/structured-logging.md)           | JSON logging with correlation    | Observability            |
-
-## How to Use Patterns
-
-### 1. Find the Right Pattern
-
-Use the index above to find a pattern matching your use case.
-
-### 2. Copy the Pattern
-
-Each pattern file contains:
-
-- **What It Does** - Purpose and use case
-- **Code Pattern** - Copy-paste ready code
-- **Customization Guide** - What to change
-- **Security Checklist** - Validation points
-
-### 3. Customize for Your Use Case
-
-Follow the customization guide in each pattern:
-
-- Replace placeholders (marked with `{...}`)
-- Update type definitions
-- Adjust business logic
-- Run validation commands
-
-### 4. Validate
-
-Each pattern includes validation commands:
-
-```bash
-yarn lint && yarn type-check  # For all patterns
-yarn test:integration          # For API patterns
-yarn test:e2e                  # For UI patterns
-```
-
-## Pattern Discovery Protocol
-
-**Before creating new patterns**, check:
-
-1. **This library first** - Use existing patterns when possible
-2. **Codebase search** - Look for similar implementations
-3. **BSA/ARCHitect** - Propose new patterns for validation
-
-## Pattern Creation Guidelines
-
-When creating new patterns (BSA/ARCHitect only):
-
-### Required Elements
-
-- [ ] Clear use case description
-- [ ] Complete, working code example
-- [ ] Customization instructions with placeholders
-- [ ] Security validation checklist
-- [ ] Success validation commands
-
-### Quality Standards
-
-- [ ] RLS enforced (if database operations)
-- [ ] Authentication required (if protected)
-- [ ] Input validation with Zod
-- [ ] Error handling comprehensive
-- [ ] TypeScript strict mode compliant
-
-### Documentation Format
-
-```markdown
-# Pattern Name
-
-## What It Does
-
-[Clear description of purpose and use case]
-
-## When to Use
-
-- Use case 1
-- Use case 2
-
-## Code Pattern
-
-[Complete, copy-paste ready code]
-
-## Customization Guide
-
-1. Replace `{placeholder}` with your value
-2. Update type definitions
-3. Adjust business logic
-
-## Security Checklist
-
-- [ ] RLS context enforced
-- [ ] Auth required
-- [ ] Input validated
-
-## Validation
-
-[Commands to verify implementation]
-```
-
-## Contributing Patterns
-
-**BSA/System Architect Only**:
-
-1. Discover gap in pattern library
-2. Extract pattern from proven implementation
-3. Validate with System Architect
-4. Document per template above
-5. Add to this index
-
-**Execution Agents**:
-
-- Use existing patterns
-- Report missing patterns to BSA
-- Do NOT create new patterns
-
-## Maintenance
-
-- **Owner**: System Architect
-- **Contributors**: BSA (pattern discovery and extraction)
-- **Consumers**: All execution agents (FE, BE, QAS, etc.)
-- **Update Frequency**: As new patterns emerge from production code
-
-## Pattern Library Evolution
-
-As patterns prove useful:
-
-1. BSA identifies frequently implemented features
-2. System Architect validates pattern
-3. BSA extracts and documents pattern
-4. Pattern added to library
-5. Execution agents use pattern for future implementations
+> Reusable analysis patterns for the 3-stage audit pipeline.
+> **37 patterns** across 6 categories.
 
 ---
 
-**Last Updated**: 2026-03
-**Pattern Count**: 18
-**Maintained by**: {{PROJECT_NAME}} Development Team + System Architect
+## Decomposition Patterns (9)
+
+How to systematically break down a project across the 10 dimensions.
+
+| Pattern | File | Used By |
+|---------|------|---------|
+| Module Decomposition | [module-decomposition.md](decomposition/module-decomposition.md) | Decomposer |
+| Entrypoint Decomposition | [entrypoint-decomposition.md](decomposition/entrypoint-decomposition.md) | Decomposer |
+| Data Flow Decomposition | [data-flow-decomposition.md](decomposition/data-flow-decomposition.md) | Decomposer |
+| Asset Lifecycle | [asset-lifecycle.md](decomposition/asset-lifecycle.md) | Decomposer |
+| State Machine | [state-machine.md](decomposition/state-machine.md) | Decomposer |
+| Permission Flow | [permission-flow.md](decomposition/permission-flow.md) | Decomposer |
+| Async / Message Flow | [async-message-flow.md](decomposition/async-message-flow.md) | Decomposer |
+| Configuration / Deployment | [config-deployment.md](decomposition/config-deployment.md) | Decomposer |
+| Invariant Extraction | [invariant-extraction.md](decomposition/invariant-extraction.md) | Decomposer |
+
+## Vulnerability Class Patterns (11)
+
+Known vulnerability archetypes with detection heuristics and task templates.
+
+| Pattern | File | Used By |
+|---------|------|---------|
+| Reentrancy (all variants) | [reentrancy.md](vulnerability-classes/reentrancy.md) | Threat Modeler, Deep Reasoner |
+| Oracle Manipulation | [oracle-manipulation.md](vulnerability-classes/oracle-manipulation.md) | Threat Modeler |
+| Flash Loan Attacks | [flash-loan-attacks.md](vulnerability-classes/flash-loan-attacks.md) | Threat Modeler |
+| Arithmetic / Precision Loss | [arithmetic.md](vulnerability-classes/arithmetic.md) | Threat Modeler, Deep Reasoner |
+| Access Control | [access-control.md](vulnerability-classes/access-control.md) | Threat Modeler |
+| Frontrunning / MEV | [frontrunning-mev.md](vulnerability-classes/frontrunning-mev.md) | Threat Modeler |
+| Storage Collision | [storage-collision.md](vulnerability-classes/storage-collision.md) | Threat Modeler |
+| Cross-Contract Composability | [cross-contract.md](vulnerability-classes/cross-contract.md) | Threat Modeler |
+| Denial of Service | [denial-of-service.md](vulnerability-classes/denial-of-service.md) | Threat Modeler |
+| Logic Errors | [logic-errors.md](vulnerability-classes/logic-errors.md) | Threat Modeler, Deep Reasoner |
+| Governance Attacks | [governance.md](vulnerability-classes/governance.md) | Threat Modeler |
+
+## Business Flow Patterns (5)
+
+Cross-contract and multi-step operation analysis.
+
+| Pattern | File | Used By |
+|---------|------|---------|
+| Operation Flow | [operation-flow.md](business-flows/operation-flow.md) | Threat Modeler |
+| Asset Lifecycle Flow | [asset-lifecycle-flow.md](business-flows/asset-lifecycle-flow.md) | Threat Modeler |
+| State Machine Flow | [state-machine-flow.md](business-flows/state-machine-flow.md) | Threat Modeler |
+| Collaboration Flow | [collaboration-flow.md](business-flows/collaboration-flow.md) | Threat Modeler |
+| Invariant Flow | [invariant-flow.md](business-flows/invariant-flow.md) | Threat Modeler |
+
+## Verification Patterns (5)
+
+How to prove or disprove a vulnerability hypothesis.
+
+| Pattern | File | Used By |
+|---------|------|---------|
+| Foundry PoC | [foundry-poc.md](verification/foundry-poc.md) | Verifier |
+| State Delta Check | [state-delta-check.md](verification/state-delta-check.md) | Verifier |
+| Counterexample Search | [counterexample-search.md](verification/counterexample-search.md) | Verifier |
+| Mathematical Proof | [mathematical-proof.md](verification/mathematical-proof.md) | Verifier |
+| Differential Testing | [differential-testing.md](verification/differential-testing.md) | Verifier |
+
+## Reporting Patterns (4)
+
+Structured output formats for findings and coverage.
+
+| Pattern | File | Used By |
+|---------|------|---------|
+| Finding Template | [finding-template.md](reporting/finding-template.md) | Report Compiler |
+| Gap Record | [gap-record.md](reporting/gap-record.md) | Report Compiler |
+| Coverage Map | [coverage-map.md](reporting/coverage-map.md) | Report Compiler |
+| Review Attribution | [review-attribution.md](reporting/review-attribution.md) | Report Compiler, Evolution Manager |
+
+## Evolution Patterns (3)
+
+How to safely change scanner components across audits.
+
+| Pattern | File | Used By |
+|---------|------|---------|
+| Component Experiment | [component-experiment.md](evolution/component-experiment.md) | Evolution Manager |
+| Regression Check | [regression-check.md](evolution/regression-check.md) | Evolution Manager |
+| Inheritance Criteria | [inheritance-criteria.md](evolution/inheritance-criteria.md) | Evolution Manager |

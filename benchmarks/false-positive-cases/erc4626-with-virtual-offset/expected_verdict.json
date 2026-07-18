@@ -1,0 +1,12 @@
+{
+  "case_id": "erc4626-with-virtual-offset",
+  "description": "Safe ERC4626 vault with virtual shares offset — must NOT be flagged as vulnerable",
+  "expected_verdict": {
+    "finding_expected": false,
+    "note": "The virtual shares offset (VIRTUAL_SHARES=1e3) makes share inflation attacks require depositing ~1000x the offset amount to get any meaningful manipulation. This is the accepted OZ protection pattern."
+  },
+  "pass_criteria": {
+    "must_find": false,
+    "allowed_severity_max": "Low"
+  }
+}

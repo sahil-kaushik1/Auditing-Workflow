@@ -1,0 +1,4 @@
+[agent]
+name = "deep-reasoner"
+description = "Smart Contract Audit Agent"
+config = ".claude/agents/deep-reasoner.md"

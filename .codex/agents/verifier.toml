@@ -1,0 +1,4 @@
+[agent]
+name = "verifier"
+description = "Smart Contract Audit Agent"
+config = ".claude/agents/verifier.md"

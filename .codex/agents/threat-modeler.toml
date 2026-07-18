@@ -1,0 +1,4 @@
+[agent]
+name = "threat-modeler"
+description = "Smart Contract Audit Agent"
+config = ".claude/agents/threat-modeler.md"

@@ -2,10 +2,9 @@
 
 Dark Factory is a self-contained module for running persistent, autonomous AI
 agent teams on a remote headless machine using tmux. Each agent runs its own
-AI CLI instance inside an isolated tmux pane or window, coordinated by a TDM
-(Technical Delivery Manager) agent that orchestrates work through the SAFe
-workflow. The entire factory is observable and controllable from Cursor IDE via
-SSH.
+AI CLI instance inside an isolated tmux pane or window, coordinated by an
+Orchestrator agent that manages the 3-stage audit pipeline. The entire factory
+is observable and controllable from Cursor IDE via SSH.
 
 **Supported runtimes:**
 - **Claude Code** -- Anthropic's CLI agent (pane-based layouts)
@@ -16,12 +15,12 @@ SSH.
 ```
  +------------------------------ Remote Server ----------------------------+
  |                                                                         |
- |  tmux session: factory-{{TICKET_PREFIX}}-123                            |
+ |  tmux session: audit-full-{timestamp}                                   |
  |  +-------------------------------------------------------------------+ |
- |  |                    TDM (lead)                                     | |
+ |  |                 Orchestrator (lead)                                | |
  |  |                    Claude Code                                    | |
  |  +----------------+------------------+---------------+---------------+ |
- |  | BE Developer   | FE Developer     | QAS           | RTE           | |
+ |  | Decomposer     | Deep Reasoner    | Verifier      | Judge         | |
  |  | Claude Code    | Claude Code      | Claude Code   | Claude Code   | |
  |  +----------------+------------------+---------------+---------------+ |
  |                                                                         |
@@ -122,14 +121,14 @@ The status dashboard shows health for every agent in every session:
   Dark Factory Status Dashboard
 ========================================
 
-Session: factory-{{TICKET_PREFIX}}-42
-  Created: 2026-03-06 09:15:00
+Session: audit-full-1719878400
+  Created: 2026-07-02 00:00:00
   Panes:
-    [1] TDM (lead)           active        ← Claude running, recent output
-    [2] BE Developer         active
-    [3] FE Developer         idle (342s)   ← Claude running, no activity 5+ min
-    [4] QAS                  dead          ← Claude process exited
-    [5] RTE                  active
+    [1] Orchestrator (lead)  active        ← Claude running, recent output
+    [2] Decomposer           active
+    [3] Deep Reasoner        idle (342s)   ← Claude running, no activity 5+ min
+    [4] Verifier             dead          ← Claude process exited
+    [5] Judge                active
 
 Aggregate Stats
   Sessions:  1
@@ -192,9 +191,10 @@ dark-factory/
     +-- tmux.conf                      # tmux configuration for agent sessions
     +-- codex-factory.sh               # Codex CLI factory tmux template
     +-- team-layouts/
-        +-- story-team.sh             # 2-3 agent layout (TDM + BE + QAS)
-        +-- feature-team.sh           # 4-5 agent layout (TDM + BE + FE + QAS + RTE)
-        +-- epic-team.sh              # 6-9 agent layout (full SAFe team)
+        +-- audit-team.sh             # Full 11-agent audit-grade pipeline (70/30)
+        +-- discovery-team.sh         # Discovery mode with hypothesis generator (50/50)
+        +-- contest-rush-team.sh      # Time-constrained parallel hypotheses (40/60)
+        +-- triage-team.sh            # Fast-triage minimal pipeline (30/70)
     +-- github/
         +-- merge-queue-ruleset.json  # GitHub merge queue ruleset template
 ```
@@ -212,8 +212,8 @@ This module is additive. It does not modify any files in `.claude/`, `.codex/`,
 `.gemini/`, or `docs/`. Your existing harness configuration is untouched. Dark
 Factory scripts reference the same `CLAUDE.md`, `AGENTS.md`, and
 `patterns_library/` that your interactive workflow uses -- agents in the factory
-follow the same SAFe conventions as agents run locally. Codex CLI agents
-additionally read `.codex/agents/*.toml` for role-specific configuration.
+follow the same audit pipeline conventions as agents run locally. Codex CLI
+agents additionally read `.codex/agents/*.toml` for role-specific configuration.
 
 ## License
 

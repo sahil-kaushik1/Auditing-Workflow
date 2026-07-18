@@ -1,203 +1,203 @@
-# CLAUDE.md
+# CLAUDE.md — Audit OS Routing Hub
 
-## AI Assistant Context for SAFe Multi-Agent Development
-
-**Repository**: {{PROJECT_NAME}}
-**Methodology**: SAFe (Scaled Agile Framework) Agentic Workflow
-**Philosophy**: "Round Table" - Equal voice, mutual respect, shared responsibility
+> **Version**: v3 — Model-Independent Audit OS + Hard Loop Enforcement
+> **Philosophy**: Model First, Reason Second, Verify Independently, Fuzz Continuously.
+> **Architecture**: 17 agents, 7 blocking gates, 3-stage pipeline, cycle-controller-enforced loop until convergence.
 
 ---
 
-## Quick Start
+## What This Repository Is
 
-This is a **SAFe multi-agent development project** with 11 specialized AI agents working collaboratively. You are part of a team where your input has equal weight with human contributors.
-
-**Core Principles**:
-- Search for existing patterns before creating new ones ("Search First, Reuse Always")
-- Attach evidence to Linear tickets for all work
-- You have "stop-the-line" authority for architectural/security concerns
-- Follow SAFe methodology: Epic → Feature → Story → Enabler
-
-**Key Resources**:
-- [AGENTS.md](AGENTS.md) - All 11 agent roles, invocation patterns, capabilities
-- [CONTRIBUTING.md](CONTRIBUTING.md) - Git workflow, commit standards, PR process
-- [docs/onboarding/](docs/onboarding/) - Setup guides and daily workflows
-- [docs/guides/ROUND-TABLE-PHILOSOPHY.md](docs/guides/ROUND-TABLE-PHILOSOPHY.md) - Collaboration principles
-- [patterns_library/](patterns_library/) - Reusable code patterns (18+ patterns, 7 categories)
+A **deterministic, multi-agent smart contract auditing operating system**.
+When an AI agent reads this file, it understands where to go, what to read, and what to do next.
+All agent roles, routing, skills, and gates are defined by the files listed below.
+No hard-coded model names. Works with Claude Code, Codex, or any capable model.
 
 ---
 
-## Development Commands
+## How Routing Works
 
-```bash
-# Development server
-{{DEV_COMMAND}}              # Start development server
+Every agent reads this file first. Then it reads its own agent definition file.
+Every agent definition file ends with a **Routing** section listing:
+- What input it expects and where to read it from
+- What output it produces and where to write it
+- What comes next (the next agent + file to read)
+- Which skills to load (file paths)
+- Which gate blocks it from proceeding
 
-# Build and production
-{{BUILD_COMMAND}}            # Build for production
-{{START_COMMAND}}            # Start production server
-
-# Code quality
-{{LINT_COMMAND}}             # Run linting
-{{LINT_FIX_COMMAND}}         # Auto-fix linting issues
-{{TYPE_CHECK_COMMAND}}       # TypeScript validation
-{{FORMAT_CHECK_COMMAND}}     # Prettier formatting check
-
-# Testing
-{{TEST_UNIT_COMMAND}}        # Run unit tests
-{{TEST_INTEGRATION_COMMAND}} # Run integration tests
-{{TEST_E2E_COMMAND}}         # Run end-to-end tests
-
-# Database (if applicable)
-{{DB_MIGRATE_COMMAND}}       # Run migrations
-
-# CI/CD validation (REQUIRED before PR)
-{{CI_VALIDATE_COMMAND}}      # Run all quality checks
-```
-
-**Important**: Always run `{{CI_VALIDATE_COMMAND}}` before creating a pull request.
+**The chain is self-contained. No prompt is needed beyond the agent name.**
 
 ---
 
-## Architecture Overview
-
-### Technology Stack
-
-- **Frontend**: {{FRONTEND_FRAMEWORK}}
-- **Backend**: {{BACKEND_FRAMEWORK}}
-- **Database**: {{DATABASE_SYSTEM}}
-- **ORM**: {{ORM_TOOL}}
-- **Authentication**: {{AUTH_PROVIDER}}
-- **Payments**: {{PAYMENT_PROVIDER}}
-- **Analytics**: {{ANALYTICS_PROVIDER}}
-- **UI Components**: {{UI_LIBRARY}}
-
-### Repository Structure
+## Pipeline Routing Map
 
 ```
-{{PROJECT_NAME}}/
-├── CLAUDE.md                    # This file - AI assistant context
-├── AGENTS.md                    # Agent team quick reference
-├── CONTRIBUTING.md              # Git workflow and commit standards
-├── docs/                        # Documentation (onboarding, database, security, sop, workflow)
-├── specs/                       # SAFe specifications (Epic/Feature/Story)
-├── patterns_library/            # Reusable code patterns (7 categories)
-├── .claude/                     # Claude Code harness (hooks, commands, skills, agents)
-├── agent_providers/             # Agent configurations
-└── scripts/                     # Utility scripts
+bash scripts/run-audit.sh → sets env vars + writes specs/cycles/CURRENT-RUN-ID.txt
+        ↓
+@orchestrator → reads .claude/agents/orchestrator.md
+        ↓ spawns in parallel:
+        ├── @sast-integrator   → .claude/agents/sast-integrator.md   → specs/sast/
+        └── @decomposer        → .claude/agents/decomposer.md         → specs/decomposition/
+                ↓ [Decomposition Gate — Judge]
+        @flow-mapper           → .claude/agents/flow-mapper.md        → specs/flows/
+                ↓
+        @threat-modeler        → .claude/agents/threat-modeler.md     → specs/tasks/
+                ↓ [Task Quality Gate — Judge + validate-outputs.sh all]
+        [PARALLEL] @context-builder  → specs/context/TASK-{N}-context.md
+        [PARALLEL] @hypothesis-generator → specs/hypotheses/HYPOTHESIS-CLOUD-{N}.md
+                ↓
+        [PARALLEL × N] @deep-reasoner → specs/reasoning/TASK-{N}-reasoning.md
+                ↓ [Drift Gate — Judge]
+        [PARALLEL × N] @skeptic       → specs/reasoning/TASK-{N}-skeptic.md
+                ↓ [Skeptic Gate]
+        Orchestrator blind handoff    → specs/verification/TASK-{N}-claim.md
+                ↓
+        [PARALLEL] @verifier (phase 3) → specs/verification/TASK-{N}-verification.md
+        [PARALLEL] @verifier + @fuzzer (phase 4+) → verification.md + fuzz-{tool}.md
+                ↓ [Evidence Gate — Judge (10 gates)]
+        @economic-analyst      → specs/verification/TASK-{N}-economic.md
+                ↓
+        bash scripts/check-pipeline-artifacts.sh → writes CYCLE-N-COMPLETE.txt
+        bash scripts/update-dashboard.sh         → findings/DASHBOARD.md
+        bash scripts/cycle-controller.sh         → exit 0=STOP / exit 1=CONTINUE
+                ↓ if CONTINUE:
+        bash scripts/auto-evolve.sh → apply safe improvements
+        [LOOP back to @context-builder with gap-focused tasks]
+                ↓ if STOP:
+        bash scripts/check-coverage.sh → verify ≥80% flow coverage
+                ↓
+        @deduplicator          → findings/DEDUP-REPORT.md
+        @report-compiler       → findings/EXECUTIVE-SUMMARY.md
+        @harness-critic        → specs/evolution/harness-critique-latest.md
+        bash scripts/auto-evolve.sh
+                ↓
+        [HITL] Human auditor reviews EXECUTIVE-SUMMARY.md
 ```
 
 ---
 
-## SAFe Workflow
+## Agent File Index
 
-All work follows the SAFe hierarchy and specs-driven development:
-
-1. BSA creates spec in `specs/{{TICKET_PREFIX}}-XXX-feature-spec.md`
-2. System Architect validates architectural approach
-3. Implementation agents execute with pattern discovery
-4. QAS validates against acceptance criteria
-5. Evidence attached to Linear ticket before POPM review
-
-### Metacognitive Tags
-
-Use in specs to highlight critical decisions:
-- `#PATH_DECISION` - Architectural path chosen (document alternatives)
-- `#PLAN_UNCERTAINTY` - Areas requiring validation
-- `#EXPORT_CRITICAL` - Security/compliance requirements
-
-### Pattern Discovery Protocol (MANDATORY)
-
-**Before implementing ANY feature:**
-
-1. Search `patterns_library/` for existing patterns
-2. Search `specs/` for similar specifications
-3. Search codebase for similar implementations
-4. Consult documentation: [CONTRIBUTING.md](CONTRIBUTING.md), [docs/database/](docs/database/), [docs/security/](docs/security/)
-5. Propose to System Architect before implementation
+| Agent | Definition File | Input From | Output To |
+|-------|----------------|------------|-----------|
+| Orchestrator | `.claude/agents/orchestrator.md` | audit.config.yml, run-audit.sh | All agents via Task tool |
+| SAST Integrator | `.claude/agents/sast-integrator.md` | Source contracts | `specs/sast/` |
+| Decomposer | `.claude/agents/decomposer.md` | Source contracts + SAST | `specs/decomposition/` |
+| Flow Mapper | `.claude/agents/flow-mapper.md` | `specs/decomposition/` | `specs/flows/` |
+| Threat Modeler | `.claude/agents/threat-modeler.md` | `specs/flows/` + neg-memory | `specs/tasks/` |
+| Context Builder | `.claude/agents/context-builder.md` | Task file + source | `specs/context/TASK-{N}-context.md` |
+| Deep Reasoner | `.claude/agents/deep-reasoner.md` | Task + context package | `specs/reasoning/TASK-{N}-reasoning.md` |
+| Hypothesis Generator | `.claude/agents/hypothesis-generator.md` | Task file | `specs/hypotheses/` |
+| Fuzzer | `.claude/agents/fuzzer.md` | `TASK-{N}-claim.md` + context | `specs/verification/TASK-{N}-fuzz-{tool}.md` |
+| Skeptic | `.claude/agents/skeptic.md` | Reasoning artifact | `specs/reasoning/TASK-{N}-skeptic.md` |
+| Verifier | `.claude/agents/verifier.md` | `TASK-{N}-claim.md` (NOT reasoning) | `specs/verification/TASK-{N}-verification.md` |
+| Economic Analyst | `.claude/agents/economic-analyst.md` | Verified finding | `specs/verification/TASK-{N}-economic.md` |
+| Judge | `.claude/agents/judge.md` | All stage outputs | `specs/gates/` |
+| Deduplicator | `.claude/agents/deduplicator.md` | All findings | `findings/DEDUP-REPORT.md` |
+| Report Compiler | `.claude/agents/report-compiler.md` | `UNIQUE-FINDINGS.md` | `findings/EXECUTIVE-SUMMARY.md` |
+| Harness Critic | `.claude/agents/harness-critic.md` | Cycle artifacts | `specs/evolution/harness-critique-latest.md` |
+| Evolution Manager | `.claude/agents/evolution-manager.md` | Critique + benchmarks | `specs/evolution/` |
 
 ---
 
-## Project-Specific Implementation Notes
+## Skill File Index
 
-*Customize this section for your technology stack.*
+Agents load skills on demand. Skills are in `.agents/skills/{name}/SKILL.md`.
 
-### Authentication
-
-**Provider**: {{AUTH_PROVIDER}}
-
-- Environment variables: See `.env.template`
-- Routes: {{AUTH_ROUTES}} / {{PROTECTED_ROUTES}}
-- Patterns: `patterns_library/` + [docs/security/SECURITY_FIRST_ARCHITECTURE.md](docs/security/SECURITY_FIRST_ARCHITECTURE.md)
-
-### Payments
-
-**Provider**: {{PAYMENT_PROVIDER}}
-
-- Webhook endpoints: {{WEBHOOK_ROUTES}}
-- Patterns: `patterns_library/api/webhook-handler.md`
-- Idempotency required for all payment operations
-
-### Analytics
-
-**Provider**: {{ANALYTICS_PROVIDER}}
-
-- Privacy-first: No tracking without explicit consent (GDPR/CCPA)
-- Error boundaries: Analytics failures must not crash the app
-
-### Database
-
-**System**: {{DATABASE_SYSTEM}} | **ORM**: {{ORM_TOOL}}
-
-**Guidelines**:
-- Always use ORM (type safety) with RLS context helpers (`withUserContext`, `withAdminContext`, `withSystemContext`)
-- Always create proper migrations (never `db push` in production)
-- Never use direct SQL or bypass RLS policies
-
-**Schema Docs**: [docs/database/DATA_DICTIONARY.md](docs/database/DATA_DICTIONARY.md) (single source of truth)
-
-**Migration Workflow**:
-```bash
-{{MIGRATION_CREATE_COMMAND}}     # Create migration
-{{MIGRATION_TEST_COMMAND}}       # Test locally
-git add {{MIGRATIONS_DIR}}/ && git commit -m "feat(db): add feature migration"
-{{MIGRATION_DEPLOY_COMMAND}}     # Deploy to production
-```
+| Skill | Path | Loaded By | When |
+|-------|------|-----------|------|
+| solidity-decomposition | `.agents/skills/solidity-decomposition/SKILL.md` | Decomposer | Stage 1 |
+| invariant-extraction | `.agents/skills/invariant-extraction/SKILL.md` | Decomposer | Stage 1 |
+| state-machine-analysis | `.agents/skills/state-machine-analysis/SKILL.md` | Decomposer | Stage 1 |
+| context-isolation | `.agents/skills/context-isolation/SKILL.md` | Decomposer, Context Builder | Stage 1, 3 |
+| flow-compilation | `.agents/skills/flow-compilation/SKILL.md` | Flow Mapper, Threat Modeler | Stage 1.5 |
+| web3-checklist | `.agents/skills/web3-checklist/SKILL.md` | SAST Integrator | Stage 1 |
+| negative-memory | `.agents/skills/negative-memory/SKILL.md` | Threat Modeler | Before every task |
+| task-compilation | `.agents/skills/task-compilation/SKILL.md` | Threat Modeler | Stage 2 |
+| defi-patterns | `.agents/skills/defi-patterns/SKILL.md` | Threat Modeler | Stage 2 |
+| access-control-patterns | `.agents/skills/access-control-patterns/SKILL.md` | Threat Modeler | Stage 2 |
+| drift-detection | `.agents/skills/drift-detection/SKILL.md` | Deep Reasoner | Stage 3 |
+| blind-verification | `.agents/skills/blind-verification/SKILL.md` | Orchestrator (handoff) | Pre-Verifier |
+| foundry-harness | `.agents/skills/foundry-harness/SKILL.md` | Verifier | Stage 3 |
+| evidence-gates | `.agents/skills/evidence-gates/SKILL.md` | Verifier, Judge | After verdict |
+| fuzzing-integration | `.agents/skills/fuzzing-integration/SKILL.md` | Verifier, Fuzzer | phase 4+ tasks |
+| economic-modeling | `.agents/skills/economic-modeling/SKILL.md` | Economic Analyst | Stage 3 |
+| gap-analysis | `.agents/skills/gap-analysis/SKILL.md` | Orchestrator | Between cycles |
+| resource-scheduling | `.agents/skills/resource-scheduling/SKILL.md` | Orchestrator | All cycles |
+| audit-reporting | `.agents/skills/audit-reporting/SKILL.md` | Report Compiler | Stage 3 |
+| cost-tracking | `.agents/skills/cost-tracking/SKILL.md` | All agents | After every task |
+| review-attribution | `.agents/skills/review-attribution/SKILL.md` | Judge | Post-audit |
+| evolution-tracking | `.agents/skills/evolution-tracking/SKILL.md` | Evolution Manager | Post-cycle |
 
 ---
 
-## Code Quality
+## Key File Paths
 
-**Linter**: {{LINTER_TOOL}} | **Config**: {{LINTER_CONFIG_FORMAT}}
-
-```bash
-{{LINT_COMMAND}}          # Run linter
-{{LINT_FIX_COMMAND}}      # Auto-fix issues
-```
-
-Always run `{{LINT_COMMAND}}` before committing. Consult your linting configuration file for project-specific rules.
+| File | Purpose |
+|------|---------|
+| `audit.config.yml` | All runtime settings: loop count, convergence threshold, parallelism, evolution |
+| `scripts/run-audit.sh` | Workspace initializer — run this before invoking @orchestrator |
+| `scripts/slice-context.sh` | Per-task context slicer — Context Builder calls this for every task |
+| `scripts/auto-evolve.sh` | Post-cycle evolution engine — Orchestrator calls this after every cycle |
+| `scripts/run-benchmark.sh` | Benchmark suite runner — measures harness quality |
+| `scripts/check-negative-memory.sh` | FP pre-check — Threat Modeler calls before every task |
+| `scripts/validate-outputs.sh` | Output schema validator |
+| `scripts/update-dashboard.sh` | Dashboard updater — called after every task; reads DB |
+| `scripts/cycle-controller.sh` | Hard loop gate — exit 0=STOP, exit 1=CONTINUE |
+| `scripts/check-pipeline-artifacts.sh` | Pre-cycle-complete artifact verifier; writes CYCLE-N-COMPLETE.txt |
+| `scripts/check-coverage.sh` | Pre-convergence flow coverage check |
+| `scripts/db-write.sh` | Agent DB write wrapper (task-start, task-complete, finding-add, etc.) |
+| `specs/skills-loaded/` | Per-task skill-loading evidence directory |
+| `db/init.sh` | One-time DB setup |
+| `db/saw.db` | SQLite audit state store |
+| `memory/negative/false-positives.jsonl` | FP pattern store — checked before every task generation |
+| `specs/cycles/CURRENT-RUN-ID.txt` | Run ID written by run-audit.sh, read by Orchestrator |
+| `specs_templates/audit_task_template.md` | 19-field task template — Threat Modeler uses this |
+| `specs_templates/finding_template.md` | Finding format — Report Compiler uses this |
+| `findings/DASHBOARD.md` | Live dashboard — updated after every task |
 
 ---
 
-## CI/CD Pipeline
+## Quality Gates (All Blocking)
 
-**MANDATORY**: Read [CONTRIBUTING.md](CONTRIBUTING.md) before any development.
+| Gate | Owner | After Stage | Passes When |
+|------|-------|-------------|-------------|
+| Decomposition Gate | Judge | Stage 1 | All 10 dimensions documented |
+| Task Quality Gate | Judge | Stage 2 | All 19 fields present, falsifiable predicates |
+| Drift Detection Gate | Judge | Reasoning | Reasoner stayed within task boundaries |
+| Skeptic Gate | Skeptic | Skeptic review | Hypothesis survives 8 challenges |
+| Evidence Gate | Judge | Verification | Passes all 10 sub-gates |
+| Evolution Gate | Evolution Manager | Post-cycle | Benchmark did not regress |
+| HITL Final Review | Human | End of audit | Human auditor signs off |
 
-### PR Workflow
+---
 
-1. Create feature branch: `{{TICKET_PREFIX}}-{number}-{description}`
-2. Implement with proper commits: `type(scope): description [{{TICKET_PREFIX}}-XXX]`
-3. Rebase: `git rebase origin/{{MAIN_BRANCH}}`
-4. Validate: `{{CI_VALIDATE_COMMAND}}` (must pass)
-5. Push: `git push --force-with-lease`
-6. Create PR using `.github/pull_request_template.md`
-7. Merge using "Rebase and merge" only
+## Environment Variables
 
-### Branch Protection
+Set by `scripts/run-audit.sh`. All agents may read these:
 
-- All PRs must be up-to-date with `{{MAIN_BRANCH}}`
-- All CI checks must pass
-- CODEOWNERS reviewers required
-- No direct pushes to `{{MAIN_BRANCH}}`
+| Variable | Value |
+|----------|-------|
+| `SAW_RUN_ID` | Unique run identifier |
+| `SAW_PROTOCOL` | Protocol name |
+| `SAW_MODE` | Scanner mode |
+| `SAW_PROJECT_PATH` | Absolute path to target contracts |
+| `SAW_DB_PATH` | Path to saw.db |
+| `RPC_URL` | RPC endpoint (optional) |
 
-**Detailed Guides**: [docs/ci-cd/CI-CD-Pipeline-Guide.md](docs/ci-cd/CI-CD-Pipeline-Guide.md) | [docs/workflow/](docs/workflow/)
+---
+
+## Anti-Patterns (Enforced by Gates)
+
+| Anti-Pattern | Blocked By |
+|-------------|-----------|
+| File-by-file reading of all contracts | Context isolation skill — use hierarchical decomposition |
+| "Check for reentrancy" (vague task) | Task Quality Gate — failure predicate must be falsifiable |
+| Reasoner verifies its own finding | Blind handoff protocol — Verifier only sees claim.md |
+| Agent reads another agent's CoT | Responsibility isolation in context-isolation skill |
+| Harness change without benchmark guard | Evolution Gate — benchmark_after >= benchmark_before required |
+| Full re-scan in Cycle 2+ | Gap-driven reallocation — Orchestrator generates gap-targeted tasks only |
+| Declaring convergence without script approval | cycle-controller.sh gate — only script can authorize STOP |
+| All tasks assigned phase 3 | Task Quality Gate + min_phase_4_plus_ratio:0.20 enforcement |
+| Artifact missing before next stage | check-pipeline-artifacts.sh blocks cycle completion |
+| Fuzzer skipped for accounting tasks | Phase Assignment Heuristics in threat-modeler.md enforce phase 4+ |

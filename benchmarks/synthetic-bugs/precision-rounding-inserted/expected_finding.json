@@ -1,0 +1,25 @@
+{
+  "benchmark_id": "BENCH-SB-001",
+  "category": "synthetic-bugs",
+  "name": "precision-rounding-inserted",
+  "description": "Clean vault with deliberate rounding direction bug inserted in previewWithdraw",
+  "bug_description": "previewWithdraw uses floor division (rounds down) instead of ceiling division (rounds up). ERC4626 spec requires ceiling for withdrawal share calculation to protect the protocol.",
+  "ground_truth": {
+    "severity": "Medium",
+    "title": "Wrong rounding direction in previewWithdraw allows users to burn fewer shares than entitled",
+    "root_cause": "previewWithdraw rounds shares DOWN (floor) instead of UP (ceiling), violating ERC4626 spec",
+    "violated_invariant": "withdrawing assets should never leave the withdrawer with more effective value than deposited",
+    "failure_predicate": "user withdraws X assets by burning fewer shares than convertToShares(X) would require, enabling systematic extraction over many operations",
+    "detection_keywords": ["previewWithdraw", "mulDivUp", "mulDivDown", "ceil", "rounding"]
+  },
+  "pass_criteria": {
+    "must_find": true,
+    "min_severity": "Low",
+    "target_function": "VulnerableVaultBugInserted.previewWithdraw",
+    "must_mention_root_cause": "wrong rounding direction"
+  },
+  "differential_check": {
+    "compare_to": "CorrectVault",
+    "difference": "previewWithdraw rounding direction"
+  }
+}

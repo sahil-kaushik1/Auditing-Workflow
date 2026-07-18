@@ -65,7 +65,32 @@ Skills provide contextual knowledge that auto-loads when relevant. View availabl
 gemini /skills
 ```
 
-### Included Skills (17)
+### Included Skills (24)
+
+#### Smart Contract Auditing Skills
+
+| Skill | Trigger | Used By |
+|-------|---------|---------|
+| `solidity-decomposition` | Project ingestion | Decomposer |
+| `task-compilation` | After decomposition | Threat Modeler |
+| `drift-detection` | During reasoning | Deep Reasoner, Judge |
+| `invariant-extraction` | During decomposition | Decomposer |
+| `defi-patterns` | During threat modeling | Threat Modeler |
+| `foundry-harness` | During verification | Verifier |
+| `audit-reporting` | Report compilation | Report Compiler |
+| `gap-analysis` | After cycle completion | Orchestrator |
+| `state-machine-analysis` | During decomposition | Decomposer |
+| `call-graph-analysis` | During SAST phase | SAST Integrator |
+| `data-flow-tracking` | During SAST phase | SAST Integrator |
+| `storage-layout-analysis` | During decomposition | Decomposer |
+| `access-control-patterns` | During threat modeling | Threat Modeler |
+| `cross-contract-analysis` | During business-flow decomposition | Threat Modeler |
+| `review-attribution` | After missed finding | Evolution Manager, Judge |
+| `resource-scheduling` | During orchestration | Orchestrator |
+| `evolution-tracking` | During long loop | Evolution Manager |
+| `context-isolation` | Always | Context Builder |
+
+#### SAFe Workflow Skills
 
 | Skill | Description |
 |-------|-------------|
@@ -86,6 +111,8 @@ gemini /skills
 | `git-advanced` | Rebase, bisect, cherry-pick |
 | `stripe-patterns` | Payment integration |
 | `confluence-docs` | ADRs, runbooks, architecture docs |
+
+> **Note**: The 7 audit skills marked with ★ are also available in `.claude/skills/` and `.agents/skills/`. Some SAFe workflow skills overlap (e.g., `pattern-discovery`, `orchestration-patterns`, `agent-coordination`, `security-audit`, `testing-patterns`, `git-advanced`).
 
 ## Commands
 

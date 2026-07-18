@@ -14,13 +14,18 @@
 # =============================================================================
 
 # Model selection -- override with `codex --model <model>`
-model = "o4-mini"
+# SAW default: o3 for strong reasoning. Override per profile below.
+model = "o3"
 
 # Approval policy controls how much autonomy Codex has:
 #   "untrusted"  -- Codex cannot execute commands or write files without approval
 #   "on-request" -- Codex can read files and run safe commands; asks before writes
 #   "never"      -- Full autonomy within sandbox constraints (use with caution)
-approval_policy = "on-request"
+#
+# SAW: Set to "never" so the pipeline writes artifacts without pausing.
+# The workspace-write sandbox still limits blast radius to this directory only.
+# "on-request" was causing Codex to pause after EVERY file write in the pipeline.
+approval_policy = "never"
 
 # Sandbox mode controls filesystem access:
 #   "workspace-write" -- Can write within the workspace directory
@@ -70,7 +75,7 @@ project_doc_max_bytes = 65536
 # -----------------------------------------------------------------------------
 
 # -- Linear: Ticket management (issues, comments, status updates) -------------
-[mcp_servers.{{MCP_LINEAR_SERVER}}]
+[mcp_servers.linear]
 command = "npx"
 args = ["-y", "@anthropic/linear-mcp-server"]
 env_vars = ["LINEAR_API_KEY"]
@@ -78,7 +83,7 @@ startup_timeout_sec = 15
 tool_timeout_sec = 60
 
 # -- Confluence: Documentation (pages, spaces, search) ------------------------
-[mcp_servers.{{MCP_CONFLUENCE_SERVER}}]
+[mcp_servers.confluence]
 command = "npx"
 args = ["-y", "@anthropic/confluence-mcp-server"]
 env_vars = ["ATLASSIAN_API_TOKEN", "ATLASSIAN_EMAIL", "CONFLUENCE_BASE_URL"]
@@ -114,8 +119,12 @@ tool_timeout_sec = 60
 # -----------------------------------------------------------------------------
 [agents]
 max_threads = 6
-max_depth = 1
-job_max_runtime_seconds = 1800
+# SAW: depth 3 allows orchestrator → sub-agent → tool invocation nesting.
+# Depth 1 (old default) prevented proper sub-agent delegation.
+max_depth = 3
+# SAW: 4 hours per job. A full audit cycle with fuzzing takes 60-120 min.
+# The old 30-min limit killed jobs mid-cycle.
+job_max_runtime_seconds = 14400
 
 # =============================================================================
 # Feature Flags
@@ -170,23 +179,43 @@ unified_exec = true
 # Adjust model names to match your OpenAI subscription tier.
 # -----------------------------------------------------------------------------
 
+# SAW audit profiles—deep reasoning roles get o3, formatting roles get o4-mini.
 [profiles.architect]
-model = "o4-mini"
+model = "o3"
 model_reasoning_effort = "high"
 sandbox_mode = "workspace-read"
-approval_policy = "on-request"
+approval_policy = "never"
 
 [profiles.developer]
-model = "o4-mini"
-model_reasoning_effort = "medium"
+model = "o3"
+model_reasoning_effort = "high"
 sandbox_mode = "workspace-write"
-approval_policy = "on-request"
+approval_policy = "never"
 
 [profiles.reviewer]
 model = "o4-mini"
 model_reasoning_effort = "medium"
 sandbox_mode = "workspace-read"
-approval_policy = "untrusted"
+approval_policy = "never"
+
+# SAW-specific audit profiles
+[profiles.reasoner]
+model = "o3"
+model_reasoning_effort = "high"
+sandbox_mode = "workspace-write"
+approval_policy = "never"
+
+[profiles.verifier]
+model = "o3"
+model_reasoning_effort = "high"
+sandbox_mode = "workspace-write"
+approval_policy = "never"
+
+[profiles.reporter]
+model = "o4-mini"
+model_reasoning_effort = "medium"
+sandbox_mode = "workspace-write"
+approval_policy = "never"
 
 # =============================================================================
 # Shell Environment Policy

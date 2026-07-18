@@ -1,0 +1,34 @@
+{
+  "benchmark_id": "BENCH-KB-003",
+  "category": "known-bugs",
+  "name": "oracle-stale-price",
+  "description": "Chainlink oracle used without staleness check in lending protocol",
+  "ground_truth": {
+    "severity": "High",
+    "title": "Stale Chainlink oracle price accepted without staleness validation",
+    "root_cause": "latestRoundData() result used without checking updatedAt timestamp against a staleness threshold",
+    "violated_invariant": "collateral must always be valued at a recent, valid price",
+    "failure_predicate": "protocol accepts stale oracle price (updatedAt > MAX_STALENESS seconds old) for borrowing decisions",
+    "attack_path": [
+      "1. Chainlink oracle stops updating (sequencer down, oracle malfunction)",
+      "2. ETH price was $4000 at last update but current real price is $2000",
+      "3. Attacker deposits 1 ETH collateral",
+      "4. borrow() calls getEthPrice() → returns stale $4000",
+      "5. Attacker borrows $2666 (66% of $4000) — but real collateral worth only $1333",
+      "6. Attacker walks away with $1333 profit (protocol undercollateralized)"
+    ],
+    "economic_impact": {
+      "asset": "USD stablecoin",
+      "max_extractable": "proportional to price discrepancy × deposited collateral",
+      "impact_class": "theft_of_funds"
+    },
+    "relevant_functions": ["getEthPrice", "borrow"],
+    "detection_keywords": ["latestRoundData", "updatedAt", "staleness", "MAX_STALENESS", "answeredInRound"]
+  },
+  "pass_criteria": {
+    "must_find": true,
+    "min_severity": "Medium",
+    "target_function": "VulnerableLending.getEthPrice",
+    "must_mention_root_cause": "no staleness check on updatedAt"
+  }
+}

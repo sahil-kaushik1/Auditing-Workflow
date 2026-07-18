@@ -1,0 +1,4 @@
+[agent]
+name = "report-compiler"
+description = "Smart Contract Audit Agent"
+config = ".claude/agents/report-compiler.md"

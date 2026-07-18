@@ -1,0 +1,17 @@
+{
+  "benchmark_id": "BENCH-FP-005",
+  "category": "false-positive-cases",
+  "name": "informational-best-practice",
+  "description": "Missing zero-address checks and unindexed events — not security vulnerabilities",
+  "why_safe": "Missing zero-address checks are best practices but do not inherently allow an attacker to steal funds or break invariants. They fail the evidence gates for Controllability and Asset Impact.",
+  "expected_verdict": {
+    "verdict": "REFUTED",
+    "reason": "Fails Evidence Gate G5 (Asset Impact) and G3 (Controllability). This is an informational best practice.",
+    "must_not_produce": ["CONFIRMED", "CANDIDATE"],
+    "acceptable_verdicts": ["REFUTED", "no-finding", "Informational"]
+  },
+  "pass_criteria": {
+    "must_not_flag_as": "High, Critical, or Medium vulnerability",
+    "acceptable_output": "REFUTED or categorized strictly as Informational/QA"
+  }
+}
