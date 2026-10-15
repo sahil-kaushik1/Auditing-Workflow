@@ -4,7 +4,7 @@
 **A Production-Tested Three-Layer Architecture for Coordinated AI Teams** 
      
 <p align="center">
-  <img src="https://img.shields.io/badge/version-v2.10.0-blue?style=flat-square" alt="Version">  
+  <img src="https://img.shields.io/badge/version-v2.10.0-blue?style=flat-square" alt="Version">   
   <img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="License">
   <img src="https://img.shields.io/badge/template-ready-brightgreen?style=flat-square" alt="Template Ready">  
   <img src="https://img.shields.io/badge/tests-382%2F382-brightgreen?style=flat-square" alt="Tests"> 
