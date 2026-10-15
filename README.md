@@ -10,7 +10,7 @@
   <img src="https://img.shields.io/badge/tests-382%2F382-brightgreen?style=flat-square" alt="Tests"> 
   <a href="https://deepwiki.com/bybren-llc/safe-agentic-workflow">
     <img src="https://img.shields.io/badge/DeepWiki-bybren--llc%2Fsafe--agentic--workflow-blue?style=flat-   square&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTQgMTloMTYiLz48cGF0aCBkPSJNNCAxNWg4Ii8+PHBhdGggZD0iTTQgMTFoMTIiLz48cGF0aCBkPSJNNCA3aDE2Ii8+PC9zdmc+" alt="DeepWiki">   
-  </a>  
+  </a>   
 </p>   
 <p align="center">
   <a href=".claude/agents/">
