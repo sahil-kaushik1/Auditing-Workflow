@@ -53,7 +53,7 @@
 ## What This Is
 
 A **production-tested AI agent harness** for teams that want structured AI workflows.
-
+ 
 **Multi-provider support**: Works with **Claude Code** (Anthropic), **Gemini CLI** (Google), **Codex CLI** (OpenAI), and **Cursor IDE** (Anysphere).
 
 **Built on SAFe methodology** (Scaled Agile Framework), adapted for AI agent teams.
