@@ -7,7 +7,7 @@ description: >
   by the Threat Modeler during task generation.
 trigger: During SAST phase and Decomposer output review.
 agents: [sast-integrator, decomposer, threat-modeler] 
----
+--- 
 
 # Web3-Native Feature Checklist
 
