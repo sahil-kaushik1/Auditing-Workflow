@@ -228,7 +228,6 @@ See `docs/whitepapers/` for methodology deep-dives and comparative analysis.
 
 - **Structured autonomy**: AI agents work within clear boundaries and quality gates
 - **Evidence-based delivery**: Every deliverable requires verifiable evidence, not "trust me"
-- **Stop-the-line authority**: Any agent can halt work for quality or security concerns
 - **Multi-provider flexibility**: Same workflow across Claude Code, Gemini CLI, Codex CLI, and Cursor IDE
 
 ### Known Limitations
