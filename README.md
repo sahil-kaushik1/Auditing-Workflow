@@ -172,7 +172,6 @@ bash scripts/setup-template.sh                # Re-apply your placeholders
 ## Choose Your Path
 
 <details>
-<summary><strong>For Practitioners</strong> - I want to use this today</summary>
 
 ### Getting Started
 
