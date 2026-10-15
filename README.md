@@ -27,21 +27,6 @@
   </a>
 </p>
 
-<p align="center">
-  <strong>Supported AI Providers</strong><br>  
-  <a href=".claude/">
-    <img src="https://img.shields.io/badge/Claude_Code-Anthropic-orange?style=flat-square&logo=anthropic" alt="Claude Code">
-  </a>
-  <a href=".gemini/">
-    <img src="https://img.shields.io/badge/Gemini_CLI-Google-blue?style=flat-square&logo=google" alt="Gemini CLI">
-  </a>
-  <a href=".codex/">
-    <img src="https://img.shields.io/badge/Codex_CLI-OpenAI-412991?style=flat-square&logo=openai" alt="Codex CLI">
-  </a>
-  <a href=".cursor/rules/">
-    <img src="https://img.shields.io/badge/Cursor_IDE-Anysphere-00D084?style=flat-square" alt="Cursor IDE">
-  </a>
-</p>
 
 > **Template Repository** - Click "Use this template" above to create your own AI agent harness.
 > After cloning, run `bash scripts/setup-template.sh` to customize for your project.
