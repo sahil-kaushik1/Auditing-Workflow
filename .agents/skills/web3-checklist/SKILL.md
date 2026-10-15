@@ -1,6 +1,6 @@
 ---
 name: web3-checklist
-description: >
+description: > 
   Web3-native feature checklist for smart contract audits. 20 protocol-specific
   checks covering proxy patterns, ERC20 edge cases, oracle safety, AMM risks,
   vault accounting, and signature security. Run during SAST phase and referenced 
