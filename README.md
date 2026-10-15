@@ -28,10 +28,6 @@
 </p>
 
 
-> **Template Repository** - Click "Use this template" above to create your own AI agent harness.
-> After cloning, run `bash scripts/setup-template.sh` to customize for your project.
-> See [TEMPLATE_SETUP.md](TEMPLATE_SETUP.md) for details.
-
 ---
 
 ## What This Is
