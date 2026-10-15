@@ -28,7 +28,7 @@
 </p>
 
 <p align="center">
-  <strong>Supported AI Providers</strong><br>
+  <strong>Supported AI Providers</strong><br>  
   <a href=".claude/">
     <img src="https://img.shields.io/badge/Claude_Code-Anthropic-orange?style=flat-square&logo=anthropic" alt="Claude Code">
   </a>
