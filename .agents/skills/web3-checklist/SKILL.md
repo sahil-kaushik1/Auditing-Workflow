@@ -10,7 +10,7 @@ agents: [sast-integrator, decomposer, threat-modeler]
 --- 
 
 # Web3-Native Feature Checklist   
-
+ 
 > Run this checklist during decomposition. Every ✗ is a potential task target.
  
 ## Proxy & Upgradeability (5 checks)
