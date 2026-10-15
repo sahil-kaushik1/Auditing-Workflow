@@ -1,4 +1,4 @@
-# SAW — SAFe Agentic Workflow
+# SAW — SAFe Agentic Workflow 
 
 ### AI Agent Harness for Multi-Agent Team Workflows
 
