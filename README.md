@@ -3,7 +3,7 @@
 ### AI Agent Harness for Multi-Agent Team Workflows
 
 **A Production-Tested Three-Layer Architecture for Coordinated AI Teams**
-
+ 
 <p align="center">
   <img src="https://img.shields.io/badge/version-v2.10.0-blue?style=flat-square" alt="Version">
   <img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="License">
