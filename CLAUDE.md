@@ -2,8 +2,6 @@
 
 > **Version**: v3 — Model-Independent Audit OS + Hard Loop Enforcement
 > **Philosophy**: Model First, Reason Second, Verify Independently, Fuzz Continuously.
-> **Architecture**: 17 agents, 7 blocking gates, 3-stage pipeline, cycle-controller-enforced loop until convergence.
-
 ---
 
 ## What This Repository Is
@@ -14,7 +12,6 @@ All agent roles, routing, skills, and gates are defined by the files listed belo
 No hard-coded model names. Works with Claude Code, Codex, or any capable model.
 
 ---
-
 ## How Routing Works
 
 Every agent reads this file first. Then it reads its own agent definition file.
