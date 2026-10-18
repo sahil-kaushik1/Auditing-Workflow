@@ -1,0 +1,409 @@
+# =============================================================================
+# Model Configuration — Capability-Based Agent-to-Model Mapping
+# =============================================================================
+#
+# This file replaces hard-coded model names (e.g., "model: opus") in agent
+# definitions. Instead of pinning a specific vendor model, each agent declares
+# what CAPABILITIES it needs. The operator selects models per provider.
+#
+# Usage:
+#   1. Choose your provider section (claude, openai, gemini, or custom)
+#   2. Map each agent role to a model available on that provider
+#   3. The harness reads this file — agent definitions remain model-agnostic
+#
+# The `capabilities` block documents what each role NEEDS from a model.
+# Use this to make informed model selections when switching providers.
+# =============================================================================
+
+# --- Agent capability requirements (model-agnostic) -------------------------
+#
+# These define WHAT each agent needs, not WHICH model to use.
+# When choosing models, match capabilities to the agent role.
+
+agent_capabilities:
+
+  # --- Planning Tier (Stage 1-2) ---
+  # These agents consume code and produce structured analysis.
+  # They need: large context windows, structured output, code comprehension.
+
+  orchestrator:
+    description: "Resource scheduler, gap analyzer, cycle manager"
+    required_capabilities:
+      - structured_output         # Must produce well-formatted markdown with tables
+      - code_comprehension        # Must understand Solidity at an expert level
+      - instruction_following     # Must follow multi-step scheduling protocols
+    preferred_capabilities:
+      - large_context_window      # Benefits from seeing full decomposition at once
+    reasoning_depth: medium       # Scheduling decisions, not deep code analysis
+
+  decomposer:
+    description: "10-dimensional project decomposition"
+    required_capabilities:
+      - code_comprehension        # Must read and understand Solidity deeply
+      - structured_output         # Must produce 10 structured artifacts
+      - large_context_window      # Must hold entire project in context
+    preferred_capabilities:
+      - tool_use                  # Benefits from grep/bash for code exploration
+    reasoning_depth: high         # Must deeply understand contract architecture
+
+  threat_modeler:
+    description: "Task compiler — 19-field proof obligations with phase heuristics"
+    required_capabilities:
+      - code_comprehension        # Must understand attack surfaces
+      - structured_output         # Must produce exact 9-field format
+      - instruction_following     # Must follow strict task compilation protocol
+    preferred_capabilities:
+      - security_domain_knowledge # Benefits from DeFi/security pre-training
+    reasoning_depth: high         # Most critical agent — task quality drives everything
+
+  # --- Execution Tier (Stage 3) ---
+  # These agents perform deep analysis within task boundaries.
+  # They need: strong reasoning, code tracing, witness construction.
+
+  deep_reasoner:
+    description: "Constrained vulnerability reasoning inside task boundaries"
+    required_capabilities:
+      - deep_reasoning            # Must trace execution paths and find edge cases
+      - code_comprehension        # Must read Solidity at assembly-level depth
+      - structured_output         # Must produce hypothesis + witness + drift check
+    preferred_capabilities:
+      - mathematical_reasoning    # Benefits from formal reasoning about invariants
+      - long_chain_of_thought     # Benefits from extended reasoning for complex paths
+    reasoning_depth: maximum      # This is the core reasoning engine — use best model
+
+  hypothesis_generator:
+    description: "Creative divergent vulnerability hypothesis generation"
+    required_capabilities:
+      - code_comprehension        # Must read Solidity
+      - creative_divergence       # Must generate novel, non-obvious hypotheses
+    preferred_capabilities:
+      - security_domain_knowledge # Benefits from knowing historical vulnerability patterns
+    reasoning_depth: medium       # Breadth over depth — scanning, not deep analysis
+
+  sast_integrator:
+    description: "Static analysis, call graphs, data-flow facts"
+    required_capabilities:
+      - tool_use                  # Must run slither, forge, grep
+      - structured_output         # Must produce indexed structural data
+    preferred_capabilities:
+      - code_comprehension        # Benefits from understanding tool output
+    reasoning_depth: low          # Primarily tool execution, not reasoning
+
+  fuzzer:
+    description: "Dedicated property-based fuzzing and symbolic execution (Medusa/Echidna/Halmos)"
+    required_capabilities:
+      - tool_use                  # Must run medusa, echidna, halmos, forge
+      - code_generation           # Must write fuzz harness contracts
+      - structured_output         # Must produce verdict with counterexample
+    preferred_capabilities:
+      - code_comprehension        # Benefits from understanding what properties to test
+    reasoning_depth: high         # Must understand invariants deeply to write good harnesses
+
+  # --- Quality Tier ---
+  # These agents validate work from other agents.
+  # They need: careful evaluation, structured judgment, independence.
+
+  verifier:
+    description: "Independent verification via Foundry PoCs"
+    required_capabilities:
+      - code_generation           # Must write Foundry test code
+      - tool_use                  # Must run forge test
+      - code_comprehension        # Must understand Solidity and test output
+      - structured_output         # Must produce verdict with evidence
+    preferred_capabilities:
+      - deep_reasoning            # Benefits from constructing counterexamples
+    reasoning_depth: high         # Must independently reproduce or refute claims
+
+  judge:
+    description: "Gate owner, evidence evaluator, finding classifier"
+    required_capabilities:
+      - instruction_following     # Must follow strict gate checklists
+      - structured_output         # Must produce pass/fail with specific reasons
+      - critical_evaluation       # Must identify gaps and weaknesses in evidence
+    preferred_capabilities:
+      - code_comprehension        # Benefits from understanding code context
+    reasoning_depth: high         # Quality depends on rigorous evaluation
+
+  context_builder:
+    description: "Per-task context provisioning with isolation"
+    required_capabilities:
+      - tool_use                  # Must run grep/bash for code extraction
+      - instruction_following     # Must follow isolation protocols strictly
+    preferred_capabilities:
+      - code_comprehension        # Benefits from understanding relevance
+    reasoning_depth: low          # Primarily extraction, not reasoning
+
+  report_compiler:
+    description: "Structured finding reports, gap records, coverage maps"
+    required_capabilities:
+      - structured_output         # Must produce well-formatted reports
+      - instruction_following     # Must follow template structures exactly
+    preferred_capabilities:
+      - code_comprehension        # Benefits from understanding findings
+    reasoning_depth: low          # Formatting and compilation, not reasoning
+
+  evolution_manager:
+    description: "Long loop: review attribution, A/B testing, rollback"
+    required_capabilities:
+      - structured_output         # Must produce attribution and experiment reports
+      - instruction_following     # Must follow evolution protocol
+      - tool_use                  # Must run git commands for rollback
+    preferred_capabilities:
+      - analytical_reasoning      # Benefits from analyzing improvement data
+    reasoning_depth: medium       # Analysis over historical data
+
+# =============================================================================
+# Provider-Specific Model Mappings
+# =============================================================================
+#
+# Select ONE provider section and configure model names.
+# The operator sets the active provider before starting an audit.
+#
+# Guideline: Map reasoning_depth to model capability:
+#   maximum → Best available reasoning model (o3, opus, gemini-2.5-pro)
+#   high    → Strong reasoning model (o3-mini, sonnet, gemini-2.5-flash)
+#   medium  → Capable model (gpt-4.1, sonnet, gemini-2.5-flash)
+#   low     → Efficient model (gpt-4.1-mini, haiku, gemini-2.5-flash)
+
+providers:
+
+  anthropic:
+    # Recommended for audit-grade work. Strong reasoning + code comprehension.
+    models:
+      orchestrator:         sonnet       # Scheduling doesn't need max reasoning
+      decomposer:           sonnet       # Strong code comprehension
+      threat_modeler:       opus         # Most critical — task quality drives everything
+      deep_reasoner:        opus         # Maximum reasoning for vulnerability detection
+      hypothesis_generator: sonnet       # Creative breadth, not depth
+      sast_integrator:      haiku        # Tool execution, minimal reasoning
+      verifier:             opus         # Independent verification needs strong reasoning
+      judge:                sonnet       # Gate evaluation — strong but not max
+      context_builder:      haiku        # Extraction only
+      report_compiler:      haiku        # Formatting only
+      evolution_manager:    sonnet       # Analysis of historical data
+      fuzzer:               sonnet       # Tool execution + harness writing — needs code_generation
+
+  openai:
+    # Strong reasoning models. o3 for deep analysis, gpt-4.1 for structured tasks.
+    models:
+      orchestrator:         gpt-4.1
+      decomposer:           gpt-4.1
+      threat_modeler:       o3
+      deep_reasoner:        o3
+      hypothesis_generator: gpt-4.1
+      sast_integrator:      gpt-4.1-mini
+      verifier:             o3
+      judge:                gpt-4.1
+      context_builder:      gpt-4.1-mini
+      report_compiler:      gpt-4.1-mini
+      evolution_manager:    gpt-4.1
+      fuzzer:               gpt-4.1
+
+  google:
+    # Gemini models. 2.5 Pro for reasoning-heavy, Flash for structured tasks.
+    models:
+      orchestrator:         gemini-2.5-flash
+      decomposer:           gemini-2.5-pro
+      threat_modeler:       gemini-2.5-pro
+      deep_reasoner:        gemini-2.5-pro
+      hypothesis_generator: gemini-2.5-flash
+      sast_integrator:      gemini-2.5-flash
+      verifier:             gemini-2.5-pro
+      judge:                gemini-2.5-flash
+      context_builder:      gemini-2.5-flash
+      report_compiler:      gemini-2.5-flash
+      evolution_manager:    gemini-2.5-flash
+      fuzzer:               gemini-2.5-flash
+
+  # --- Custom provider template ---
+  # Copy this block and fill in your model names.
+  #
+  # custom:
+  #   models:
+  #     orchestrator:         your-medium-model
+  #     decomposer:           your-strong-model
+  #     threat_modeler:       your-best-model
+  #     deep_reasoner:        your-best-model
+  #     hypothesis_generator: your-medium-model
+  #     sast_integrator:      your-efficient-model
+  #     verifier:             your-best-model
+  #     judge:                your-strong-model
+  #     context_builder:      your-efficient-model
+  #     report_compiler:      your-efficient-model
+  #     evolution_manager:    your-medium-model
+
+# =============================================================================
+# Active Provider Selection
+# =============================================================================
+#
+# IMPORTANT: This file is a PLANNING DOCUMENT, not a runtime switch.
+#
+# Codex and Claude Code each run ONE model for the entire session.
+# You select the model in the UI or CLI before starting — the harness
+# cannot switch models mid-session.
+#
+# This file tells you WHICH model to select in your AI client for each
+# pipeline stage. Use the staged run approach to apply these mappings:
+#
+#   Stage 1 (planning):     select the model listed under orchestrator/decomposer
+#   Stage 2 (reasoning):    select the model listed under deep_reasoner
+#   Stage 3 (verification): select the model listed under verifier
+#   Stage 4 (reporting):    select the model listed under report_compiler
+#
+# Single-session run: pick the model listed under deep_reasoner (best model)
+# and it will run all stages. Performance will be uniform but adequate.
+#
+# See GUIDE.md section 16 for the full multi-session strategy.
+
+active_provider: anthropic
+
+# =============================================================================
+# Scanner Mode Overrides
+# =============================================================================
+#
+# Different scanner modes may warrant different model allocations.
+# These override the provider defaults when a specific mode is active.
+
+mode_overrides:
+
+  fast_triage:
+    # Use cheaper models for quick assessment
+    deep_reasoner:        sonnet
+    threat_modeler:       sonnet
+    verifier:             sonnet
+    skeptic:              haiku        # Skeptic can use cheaper model
+
+  contest_rush:
+    # All hands on deck — use best models everywhere
+    decomposer:           opus
+    hypothesis_generator: opus
+    judge:                opus
+    skeptic:              sonnet
+
+  # ── New Modes (v2) ──────────────────────────────────────────
+
+  smoke_scan:
+    # Surface check only — no verification, no gap cycles
+    # Budget split: 20/80 (20% decomposition, 80% fast pattern matching)
+    deep_reasoner:        haiku        # Cheap model for surface scan
+    threat_modeler:       haiku
+    verifier:             haiku
+    skeptic:              haiku
+    flow_mapper:          haiku
+    max_tasks: 10
+    verification: none
+    gap_cycles: false
+    skeptic_enabled: false
+    description: "Fast surface check. No PoC required. Pattern matching only."
+
+  conservative:
+    # Maximum precision, minimal spend
+    # Budget split: 60/40 — full verification on fewer tasks
+    deep_reasoner:        sonnet       # Save opus budget
+    threat_modeler:       opus         # Task quality matters most
+    verifier:             opus         # Full verification mandatory
+    skeptic:              opus         # Strict skeptic review
+    flow_mapper:          sonnet
+    max_tasks: 5
+    confidence_threshold: 0.9         # Only near-certain vulnerability patterns
+    verification: full
+    gap_cycles: false
+    description: "Maximum precision. Only near-certain vulnerabilities. Minimal FP."
+
+# =============================================================================
+# Bug Bounty Optimal Sequence (v2)
+# =============================================================================
+# Chain modes for best signal-to-cost ratio on time-sensitive bug bounties.
+# Run stages in order, filtering candidates between each.
+
+bug_bounty_sequence:
+  description: "4-stage chain optimized for bug bounty ROI"
+  stages:
+    - stage: 1
+      mode: discovery
+      purpose: "Generate all hypotheses cheaply"
+      max_tasks: 30
+      output_filter: all_hypotheses
+
+    - stage: 2
+      mode: contest_rush
+      purpose: "Deepen top-10 leads quickly"
+      input_filter: top_10_by_economic_impact
+      output_filter: candidates
+
+    - stage: 3
+      mode: fast_triage
+      purpose: "Filter survivors, kill weak leads"
+      input_filter: candidates
+      output_filter: survivors
+
+    - stage: 4
+      mode: audit_grade
+      purpose: "Full proof only for survivors"
+      input_filter: survivors
+      output_filter: confirmed_findings
+
+# =============================================================================
+# New Agent Role Mappings (v2)
+# =============================================================================
+# These roles were added in v2 and need model assignments per provider.
+
+new_agent_roles:
+  # Capability requirements for each new agent
+  flow_mapper:
+    reasoning_depth: medium
+    min_context_tokens: 64000
+    tool_use: false
+
+  skeptic:
+    reasoning_depth: high
+    min_context_tokens: 32000
+    tool_use: false
+    note: "Must NOT receive Reasoner CoT — blind protocol enforced"
+
+  economic_analyst:
+    reasoning_depth: medium
+    min_context_tokens: 32000
+    tool_use: true
+    note: "Needs cast/forge access for on-chain queries"
+
+  deduplicator:
+    reasoning_depth: low
+    min_context_tokens: 64000
+    tool_use: false
+
+  harness_critic:
+    reasoning_depth: medium
+    min_context_tokens: 32000
+    tool_use: false
+
+  fuzzer:
+    reasoning_depth: high
+    min_context_tokens: 32000
+    tool_use: true
+    note: "Must have Foundry, Medusa, Echidna, and Halmos installed in PATH"
+
+# Provider mappings for new agents (add to each provider's models section):
+# anthropic:
+#   flow_mapper:       claude-sonnet-4
+#   skeptic:           claude-opus-4
+#   economic_analyst:  claude-sonnet-4
+#   deduplicator:      claude-haiku-3
+#   harness_critic:    claude-sonnet-4
+#   fuzzer:            claude-sonnet-4
+#
+# openai:
+#   flow_mapper:       gpt-4.1
+#   skeptic:           o3
+#   economic_analyst:  gpt-4.1
+#   deduplicator:      gpt-4.1-mini
+#   harness_critic:    gpt-4.1
+#   fuzzer:            gpt-4.1
+#
+# google:
+#   flow_mapper:       gemini-2.5-flash
+#   skeptic:           gemini-2.5-pro
+#   economic_analyst:  gemini-2.5-flash
+#   deduplicator:      gemini-2.5-flash
+#   harness_critic:    gemini-2.5-flash
+#   fuzzer:            gemini-2.5-flash
